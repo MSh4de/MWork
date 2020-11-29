@@ -5,9 +5,7 @@ import eu.mshadeproduction.mwork.packet.entity.PlayerItem;
 
 public class PlayerEyeLocationPacket extends PlayerVectorPacket implements PacketResponse {
 
-
-    public PlayerEyeLocationPacket(PlayerItem player, double x, double y, double z) {
-        super(player, x, y, z);
+    public PlayerEyeLocationPacket(PlayerItem player, double x, double y, double z, float yaw, float pitch) {
+        super(player, x, y, z, yaw, pitch);
     }
-
 }
