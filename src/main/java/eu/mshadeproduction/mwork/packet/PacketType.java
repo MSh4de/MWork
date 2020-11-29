@@ -17,7 +17,7 @@ public enum PacketType {
     PLAYER_MESSAGE_PACKET(PlayerMessagePacket.class),
     PLAYER_VECTOR_PACKET(PlayerVectorPacket.class),
     PLAYER_TELEPORT_PACKET(PlayerTeleportPacket.class),
-    PLAYER_EYE_VECTOR_PACKET(PlayerEyeVectorPacket.class);
+    PLAYER_EYE_LOCATION_PACKET(PlayerEyeLocationPacket.class);
 
 
 
