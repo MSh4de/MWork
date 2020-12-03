@@ -1,10 +1,11 @@
 package eu.mshadeproduction.mwork.packet.player;
 
 import eu.mshadeproduction.mwork.packet.PacketHandle;
-import eu.mshadeproduction.mwork.packet.entity.PlayerItem;
+import eu.mshadeproduction.mwork.packet.PacketSync;
+import eu.mshadeproduction.mwork.packet.items.PlayerItem;
 import eu.mshadeproduction.mwork.packet.world.LocationItem;
 
-public class PlayerTeleportPacket extends PacketHandle {
+public class PlayerTeleportPacket extends PacketHandle implements PacketSync {
 
     private final PlayerItem player;
     private final LocationItem location;

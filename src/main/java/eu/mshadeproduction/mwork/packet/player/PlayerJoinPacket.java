@@ -1,8 +1,8 @@
 package eu.mshadeproduction.mwork.packet.player;
 
 import eu.mshadeproduction.mwork.packet.Packet;
-import eu.mshadeproduction.mwork.packet.entity.PlayerItem;
-import eu.mshadeproduction.mwork.packet.entity.ServerItem;
+import eu.mshadeproduction.mwork.packet.items.PlayerItem;
+import eu.mshadeproduction.mwork.packet.items.ServerItem;
 
 public class PlayerJoinPacket extends Packet {
 

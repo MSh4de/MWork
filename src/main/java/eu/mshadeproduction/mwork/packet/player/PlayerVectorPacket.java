@@ -1,10 +1,11 @@
 package eu.mshadeproduction.mwork.packet.player;
 
 import eu.mshadeproduction.mwork.packet.PacketHandle;
-import eu.mshadeproduction.mwork.packet.entity.PlayerItem;
+import eu.mshadeproduction.mwork.packet.PacketSync;
+import eu.mshadeproduction.mwork.packet.items.PlayerItem;
 
 
-public class PlayerVectorPacket extends PacketHandle {
+public class PlayerVectorPacket extends PacketHandle implements PacketSync {
 
     private final PlayerItem player;
     private final double x, y, z;
