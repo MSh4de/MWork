@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork.packet.entity;
+package eu.mshadeproduction.mwork.packet.items;
 
 public class ServerItem {
 }

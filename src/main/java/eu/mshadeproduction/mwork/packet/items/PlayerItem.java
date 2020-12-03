@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork.packet.entity;
+package eu.mshadeproduction.mwork.packet.items;
 
 import eu.mshadeproduction.mwork.packet.world.LocationItem;
 
@@ -8,12 +8,10 @@ public class PlayerItem {
 
     private final UUID uuid;
     private final String name;
-    private final LocationItem location;
 
-    public PlayerItem(UUID uuid, String name, LocationItem location) {
+    public PlayerItem(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
-        this.location = location;
     }
 
     public UUID getUuid() {
@@ -24,8 +22,5 @@ public class PlayerItem {
         return name;
     }
 
-    public LocationItem getLocationItem() {
-        return location;
-    }
 
 }

@@ -1,6 +1,5 @@
 package eu.mshadeproduction.mwork.packet.world;
 
-import eu.mshadeproduction.mwork.packet.player.Vector;
 
 public class LocationItem {
 
