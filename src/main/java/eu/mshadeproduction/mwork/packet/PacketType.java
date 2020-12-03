@@ -2,6 +2,7 @@ package eu.mshadeproduction.mwork.packet;
 
 import eu.mshadeproduction.mwork.packet.common.HeartBeatPacket;
 import eu.mshadeproduction.mwork.packet.player.*;
+import eu.mshadeproduction.mwork.packet.player.particle.PlayerParticlePacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +15,14 @@ public enum PacketType {
     PLAYER_JOIN_PACKET(PlayerJoinPacket.class),
     PLAYER_MOVE_PACKET(PlayerMovePacket.class),
     PLAYER_REDUCE_MOVE_PACKET(PlayerReduceMovePacket.class),
+
     PLAYER_MESSAGE_PACKET(PlayerMessagePacket.class),
     PLAYER_VECTOR_PACKET(PlayerVectorPacket.class),
     PLAYER_TELEPORT_PACKET(PlayerTeleportPacket.class),
-    PLAYER_EYE_LOCATION_PACKET(PlayerEyeLocationPacket.class);
+    PLAYER_PARTICLE_PACKET(PlayerParticlePacket.class),
 
+    PLAYER_LOCATION_PACKET(PlayerLocationPacket.class),
+    PLAYER_EYE_LOCATION_PACKET(PlayerEyeLocationPacket.class);
 
 
 

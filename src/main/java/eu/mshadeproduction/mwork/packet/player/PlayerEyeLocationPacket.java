@@ -1,23 +1,25 @@
 package eu.mshadeproduction.mwork.packet.player;
 
+import eu.mshadeproduction.mwork.packet.Packet;
 import eu.mshadeproduction.mwork.packet.PacketResponse;
-import eu.mshadeproduction.mwork.packet.entity.PlayerItem;
+import eu.mshadeproduction.mwork.packet.items.PlayerItem;
+import eu.mshadeproduction.mwork.packet.world.LocationItem;
 
-public class PlayerEyeLocationPacket extends PlayerVectorPacket implements PacketResponse {
+public class PlayerEyeLocationPacket extends Packet implements PacketResponse {
 
-    private final float yaw, pitch;
+    private final PlayerItem player;
+    private final LocationItem location;
 
-    public PlayerEyeLocationPacket(PlayerItem player, double x, double y, double z, float yaw, float pitch) {
-        super(player, x, y, z);
-        this.yaw = yaw;
-        this.pitch = pitch;
+    public PlayerEyeLocationPacket(PlayerItem player, LocationItem location) {
+        this.player = player;
+        this.location = location;
     }
 
-    public float getYaw() {
-        return yaw;
+    public PlayerItem getPlayer() {
+        return player;
     }
 
-    public float getPitch() {
-        return pitch;
+    public LocationItem getLocation() {
+        return location;
     }
 }
