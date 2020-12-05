@@ -14,7 +14,7 @@ public class LocationItem {
         this(world, x, y, z, 0, 0);
     }
 
-    public LocationItem(WorldItem world, double x, double y, double z, float pitch, float yaw) {
+    public LocationItem(WorldItem world, double x, double y, double z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
