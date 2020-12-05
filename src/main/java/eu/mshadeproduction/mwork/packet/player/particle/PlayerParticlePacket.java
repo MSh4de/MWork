@@ -2,6 +2,7 @@ package eu.mshadeproduction.mwork.packet.player.particle;
 
 import eu.mshadeproduction.mwork.packet.PacketHandle;
 import eu.mshadeproduction.mwork.packet.items.PlayerItem;
+import eu.mshadeproduction.mwork.packet.world.LocationItem;
 
 import java.util.Optional;
 
@@ -9,16 +10,15 @@ public class PlayerParticlePacket extends PacketHandle {
 
     private final PlayerItem player;
     private final ParticleType particleType;
-    private final double x, y, z, offsetX, offsetY ,offsetZ, speed;
+    private final LocationItem location;
+    private final double offsetX, offsetY ,offsetZ, speed;
     private final int count;
     private final Optional<ColorItem> color;
 
-    public PlayerParticlePacket(PlayerItem player, ParticleType particleType, double x, double y, double z, double offsetX, double offsetY, double offsetZ, double speed, int count, Optional<ColorItem> color) {
+    public PlayerParticlePacket(PlayerItem player, ParticleType particleType, LocationItem location, double offsetX, double offsetY, double offsetZ, double speed, int count, Optional<ColorItem> color) {
         this.player = player;
         this.particleType = particleType;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.location = location;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.offsetZ = offsetZ;
@@ -35,16 +35,8 @@ public class PlayerParticlePacket extends PacketHandle {
         return particleType;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
+    public LocationItem getLocation() {
+        return location;
     }
 
     public double getOffsetX() {
