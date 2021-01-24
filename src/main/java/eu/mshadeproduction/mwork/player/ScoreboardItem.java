@@ -7,7 +7,12 @@ public class ScoreboardItem {
     private String title;
     private List<String> lines;
 
-    public ScoreboardItem() {
+    public ScoreboardItem(String title, List<String> lines) {
+        this.title = title;
+        this.lines = lines;
+    }
+
+    private ScoreboardItem() {
     }
 
     public String getTitle() {
