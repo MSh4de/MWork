@@ -7,12 +7,12 @@ public class PlayerItem {
     private UUID uuid;
     private String name;
 
+    private PlayerItem() { }
+
     public PlayerItem(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
     }
-
-    public PlayerItem() { }
 
     public UUID getUuid() {
         return uuid;

@@ -5,7 +5,10 @@ import eu.mshadeproduction.mwork.streaming.Streaming;
 
 public class PlayerQuiEventStreaming extends Streaming {
 
-    private final PlayerItem player;
+    private PlayerItem player;
+
+    private PlayerQuiEventStreaming() {
+    }
 
     public PlayerQuiEventStreaming(PlayerItem player) {
         this.player = player;

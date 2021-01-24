@@ -5,11 +5,15 @@ import eu.mshadeproduction.mwork.streaming.Streaming;
 
 public class PlayerMoveEventStreaming extends Streaming {
 
-    private final PlayerItem player;
+    private PlayerItem player;
+
+    private PlayerMoveEventStreaming() {
+    }
 
     public PlayerMoveEventStreaming(PlayerItem player) {
         this.player = player;
     }
+
 
     public PlayerItem getPlayer() {
         return player;
