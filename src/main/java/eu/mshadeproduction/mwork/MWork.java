@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import eu.mshadeproduction.mwork.service.DefaultServiceDriver;
-import eu.mshadeproduction.mwork.service.ServiceDriver;
-import eu.mshadeproduction.mwork.service.TradeContext;
-import eu.mshadeproduction.mwork.service.TradeBucketDeserializer;
-import eu.mshadeproduction.mwork.streaming.DefaultStreamingDriver;
-import eu.mshadeproduction.mwork.streaming.StreamingDriver;
+import org.json.JSONObject;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,18 +16,36 @@ import java.util.concurrent.ScheduledExecutorService;
 public final class MWork {
 
     private static MWork mWork;
+    private final Set<Class<?>> primitives = new HashSet<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ServiceDriver serviceDriver = new DefaultServiceDriver();
-    private final StreamingDriver streamingDriver = new DefaultStreamingDriver();
-    private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+    private final PacketDriver packetDriver = new DefaultPacketDriver();
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
     private MWork() {
         mWork = this;
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addDeserializer(TradeContext.class, new TradeBucketDeserializer());
+        simpleModule.addSerializer(JSONObject.class, new JSONObjectSerializer());
+        simpleModule.addDeserializer(JSONObject.class, new JSONObjectDeserializer());
         this.objectMapper.registerModule(simpleModule);
         this.objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        primitives.add(String.class);
+        primitives.add(int.class);
+        primitives.add(Integer.class);
+        primitives.add(boolean.class);
+        primitives.add(Boolean.class);
+        primitives.add(Float.class);
+        primitives.add(float.class);
+        primitives.add(Character.class);
+        primitives.add(char.class);
+        primitives.add(Byte.class);
+        primitives.add(byte.class);
+        primitives.add(Long.class);
+        primitives.add(long.class);
+        primitives.add(Double.class);
+        primitives.add(double.class);
+
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {
@@ -45,35 +60,28 @@ public final class MWork {
         MWork.get().getScheduledExecutorService().execute(runnable);
     }
 
-    public ServiceDriver getServiceDriver() {
-        return serviceDriver;
+    public PacketDriver getPacketDriver() {
+        return packetDriver;
     }
 
-    public StreamingDriver getStreamingDriver() {
-        return streamingDriver;
+    public String serialize(Object object){
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+
     }
 
-    public CompletableFuture<String> serialize(Object object){
-        CompletableFuture<String> completableFuture = new CompletableFuture<>();
-        scheduledExecutorService.execute(() -> {
+    public <T> T deserialize(String s, Class<T> aClass){
             try {
-                completableFuture.complete(objectMapper.writeValueAsString(object));
+                return objectMapper.readValue(s, aClass);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e.getMessage(), e.getCause());
             }
-        });
-        return completableFuture;
     }
 
-    public <T> CompletableFuture<T> deserialize(String s, Class<T> aClass){
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
-        scheduledExecutorService.execute(() -> {
-            try {
-                completableFuture.complete(objectMapper.readValue(s, aClass));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        });
-        return completableFuture;
+    public boolean isPrimitive(Class<?> aClass){
+        return primitives.contains(aClass);
     }
 }
