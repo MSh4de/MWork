@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum MShadeMaterial {
+public enum MMaterial {
 
     ACACIA_BOAT,
     ACACIA_BUTTON,
@@ -1086,15 +1086,15 @@ public enum MShadeMaterial {
 
 
 
-    private static Map<String, MShadeMaterial> mShadeMaterialMap = new HashMap<>();
+    private static Map<String, MMaterial> mShadeMaterialMap = new HashMap<>();
 
     static {
-        for (MShadeMaterial mShadeMaterial : MShadeMaterial.values()) {
-            mShadeMaterialMap.put(mShadeMaterial.name(), mShadeMaterial);
+        for (MMaterial mMaterial : MMaterial.values()) {
+            mShadeMaterialMap.put(mMaterial.name(), mMaterial);
         }
     }
 
-    public static Optional<MShadeMaterial> getMaterialByName(String s){
+    public static Optional<MMaterial> getMaterialByName(String s){
         return Optional.ofNullable(mShadeMaterialMap.get(s.toUpperCase()));
     }
 

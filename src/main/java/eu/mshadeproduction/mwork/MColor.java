@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum MaterialColor {
+public enum MColor {
 
     WHITE(0),
     ORANGE(1),
@@ -24,16 +24,16 @@ public enum MaterialColor {
     BLACK(15);
 
     private final int data;
-    MaterialColor(int data) {
+    MColor(int data) {
         this.data = data;
     }
 
-    private final static Map<String, MaterialColor> STRING_MATERIAL_COLOR_MAP = new HashMap<>();
-    private final static Map<Integer, MaterialColor> INTEGER_MATERIAL_COLOR_MAP = new HashMap<>();
+    private final static Map<String, MColor> STRING_MATERIAL_COLOR_MAP = new HashMap<>();
+    private final static Map<Integer, MColor> INTEGER_MATERIAL_COLOR_MAP = new HashMap<>();
     static {
-        for (MaterialColor materialColor : MaterialColor.values()) {
-            STRING_MATERIAL_COLOR_MAP.put(materialColor.name(), materialColor);
-            INTEGER_MATERIAL_COLOR_MAP.put(materialColor.data, materialColor);
+        for (MColor mColor : MColor.values()) {
+            STRING_MATERIAL_COLOR_MAP.put(mColor.name(), mColor);
+            INTEGER_MATERIAL_COLOR_MAP.put(mColor.data, mColor);
         }
     }
 
@@ -41,10 +41,10 @@ public enum MaterialColor {
         return (short) data;
     }
 
-    public static Optional<MaterialColor> getByData(int data){
+    public static Optional<MColor> getByData(int data){
         return Optional.ofNullable(INTEGER_MATERIAL_COLOR_MAP.get(data));
     }
-    public static Optional<MaterialColor> getByName(String name){
+    public static Optional<MColor> getByName(String name){
         return Optional.ofNullable(STRING_MATERIAL_COLOR_MAP.get(name));
     }
 
