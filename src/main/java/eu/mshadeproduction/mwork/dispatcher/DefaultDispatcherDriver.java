@@ -12,7 +12,7 @@ public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
     @Override
     public void register(DispatcherListener dispatcherListener) {
         for (Method method : dispatcherListener.getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(DispatcherHandler.class) && method.getParameterTypes().length == 1) {
+            if (method.isAnnotationPresent(DispatcherHandler.class)) {
                 dispatcherContexts.add(new DispatcherContext(method, dispatcherListener));
             }
         }
@@ -26,15 +26,31 @@ public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
     }
 
     @Override
-    public void dispatch(T t) {
+    public void dispatch(T t, DispatcherContainer dispatcherContainer) {
         for (DispatcherContext dispatcherContext : dispatcherContexts) {
-            if(dispatcherContext.getMethod().getParameterTypes()[0].isAssignableFrom(t.getClass())) {
-                try {
-                    dispatcherContext.getMethod().invoke(dispatcherContext.getDispatcherListener(), t);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            Object[] objects = buildParameter(dispatcherContext.getMethod(), t, dispatcherContainer);
+            try {
+                dispatcherContext.getMethod().invoke(dispatcherContext.getDispatcherListener(), objects);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
             }
+
         }
+    }
+
+    @Override
+    public void dispatch(T t) {
+        dispatch(t, null);
+    }
+    
+
+    private Object[] buildParameter(Method method, T t, DispatcherContainer dispatcherContainer){
+        Object[] objects = new Object[method.getParameterTypes().length];
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
+            Class<?> parameterType = method.getParameterTypes()[i];
+            if (t != null && parameterType.isAssignableFrom(t.getClass())) objects[i] = t;
+            else if (dispatcherContainer != null && parameterType.isAssignableFrom(dispatcherContainer.getClass())) objects[i] = dispatcherContainer;
+        }
+        return objects;
     }
 }

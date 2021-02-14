@@ -6,6 +6,8 @@ public interface DispatcherDriver<T> {
 
     void unregister(DispatcherListener dispatcherListener);
 
+    void dispatch(T t, DispatcherContainer dispatcherContainer);
+
     void dispatch(T t);
 
 }
