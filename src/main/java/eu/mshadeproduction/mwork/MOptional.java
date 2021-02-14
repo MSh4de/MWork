@@ -2,6 +2,7 @@ package eu.mshadeproduction.mwork;
 
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class MOptional<T> {
@@ -40,10 +41,25 @@ public class MOptional<T> {
             consumer.accept(value);
         return this;
     }
+    public <S> S ifPresent(MConsumer<S,T> consumer, S other) {
+        if (value != null) return consumer.accept(value);
+        return other;
+    }
+
+    public T orElse(T other) {
+        return value != null ? value : other;
+    }
 
     public MOptional<T> ifNotPresent(Runnable runnable) {
         if (value == null)
             runnable.run();
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "MOptional{" +
+                "value=" + value +
+                '}';
     }
 }

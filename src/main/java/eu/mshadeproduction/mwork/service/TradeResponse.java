@@ -1,6 +1,7 @@
 package eu.mshadeproduction.mwork.service;
 
 import eu.mshadeproduction.mwork.MWork;
+import eu.mshadeproduction.mwork.Receiver;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
@@ -11,10 +12,11 @@ public class TradeResponse extends Trade{
     private TradeStatus tradeStatus = TradeStatus.OK;
 
     private TradeResponse() {
+        super(0, null);
     }
 
-    public TradeResponse(int id) {
-        super(id);
+    public TradeResponse(int id, Receiver receiver) {
+        super(id, receiver);
     }
 
 
@@ -43,5 +45,13 @@ public class TradeResponse extends Trade{
     public TradeResponse setTradeStatus(TradeStatus tradeStatus) {
         this.tradeStatus = tradeStatus;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "TradeResponse{" +
+                "result=" + result +
+                ", tradeStatus=" + tradeStatus +
+                '}';
     }
 }

@@ -2,6 +2,6 @@ package eu.mshadeproduction.mwork.service;
 
 public enum ServiceType {
 
-    PLAYER, WORLD
+    PLAYER, WORLD, SERVER, ATOM
 
 }

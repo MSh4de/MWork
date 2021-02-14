@@ -42,7 +42,7 @@ public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
     public void dispatch(T t) {
         dispatch(t, null);
     }
-    
+
 
     private Object[] buildParameter(Method method, T t, DispatcherContainer dispatcherContainer){
         Object[] objects = new Object[method.getParameterTypes().length];

@@ -1,5 +1,6 @@
 package eu.mshadeproduction.mwork.service;
 
+import eu.mshadeproduction.mwork.Receiver;
 import org.json.JSONObject;
 
 public class TradeRequest extends Trade {
@@ -9,9 +10,11 @@ public class TradeRequest extends Trade {
     private JSONObject params = new JSONObject();
 
     private TradeRequest() {
+        super(null);
     }
 
-    public TradeRequest(String method, ServiceType serviceType) {
+    public TradeRequest(String method, ServiceType serviceType, Receiver receiver) {
+        super(receiver);
         this.serviceType = serviceType;
         this.method = method;
     }
@@ -31,5 +34,16 @@ public class TradeRequest extends Trade {
 
     public String getMethod() {
         return method;
+    }
+
+    @Override
+    public String toString() {
+        return "TradeRequest{" +
+                "contextType= "+ getContextType()+
+                ", receiver= "+ getReceiver()+
+                ", serviceType=" + serviceType +
+                ", method='" + method + '\'' +
+                ", params=" + params +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork;
+package eu.mshadeproduction.mwork.item;
 
 import java.util.ArrayList;
 import java.util.List;

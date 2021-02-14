@@ -1,6 +1,6 @@
 package eu.mshadeproduction.mwork.world;
 
-public enum ParticleType {
+public enum MParticleType {
 
     EXPLOSION_NORMAL(),
     EXPLOSION_LARGE(),

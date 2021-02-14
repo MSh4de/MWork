@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface TradeAction {
 
-    String name();
+    String value();
 
 }
 

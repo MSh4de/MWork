@@ -26,15 +26,16 @@ public class DefaultPacketDriver implements PacketDriver {
     }
 
     @Override
-    public void emit(Session session, Streaming streaming) {
-        streamingListeners.forEach(streamingListener -> streamingListener.handle(session, streaming));
+    public void emit(Session session, Streaming streaming, Receiver receiver) {
+        streamingListeners.forEach(streamingListener -> streamingListener.handle(session, streaming, receiver));
     }
 
     @Override
-    public void query(Session session, Streaming streaming) {
+    public void query(Session session, Streaming streaming, Receiver receiver) {
         JSONObject jsonObject = new JSONObject(MWork.get().serialize(streaming));
         jsonObject.put("contextType", ContextType.STREAMING);
-        session.getRemote().sendStringByFuture(jsonObject.toString());
+        jsonObject.put("receiver", receiver);
+        if (session.isOpen()) session.getRemote().sendStringByFuture(MWork.get().serialize(jsonObject.toString()));
     }
 
     @Override
@@ -45,9 +46,9 @@ public class DefaultPacketDriver implements PacketDriver {
     @Override
     public void emit(Session session, TradeRequest tradeRequest) {
         Optional.ofNullable(this.services.get(tradeRequest.getServiceType())).ifPresent(service -> {
-            TradeResponse tradeResponse = new TradeResponse(tradeRequest.getId());
-            service.invokeService(tradeRequest, tradeResponse);
-            session.getRemote().sendStringByFuture(MWork.get().serialize(tradeResponse));
+            TradeResponse tradeResponse = new TradeResponse(tradeRequest.getId(), tradeRequest.getReceiver());
+            service.invokeService(session, tradeRequest, tradeResponse);
+            if (session.isOpen()) session.getRemote().sendStringByFuture(MWork.get().serialize(tradeResponse));
         });
     }
 
@@ -56,8 +57,20 @@ public class DefaultPacketDriver implements PacketDriver {
     public CompletableFuture<TradeResponse> query(Session session, TradeRequest tradeRequest) {
         CompletableFuture<TradeResponse> completableFuture = new CompletableFuture<>();
         this.futureConcurrentMap.put(tradeRequest.getId(), completableFuture);
-        session.getRemote().sendStringByFuture(MWork.get().serialize(tradeRequest));
+        if (session.isOpen()) session.getRemote().sendStringByFuture(MWork.get().serialize(tradeRequest));
         return completableFuture;
+    }
+
+    @Override
+    public boolean isValid(ContextType contextType, JSONObject jsonObject) {
+        if (jsonObject.has("receiver")) {
+            if (contextType == ContextType.SERVICE){
+                return jsonObject.has("id") && ((jsonObject.has("method") && jsonObject.has("params") && jsonObject.has("serviceType")) || (jsonObject.has("result") && jsonObject.has("tradeStatus"))) ;
+            }else if (contextType == ContextType.STREAMING){
+                return jsonObject.has("streamingType");
+            }
+        }
+        return false;
     }
 
 
