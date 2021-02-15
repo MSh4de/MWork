@@ -28,13 +28,14 @@ public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
     @Override
     public void dispatch(T t, DispatcherContainer dispatcherContainer) {
         for (DispatcherContext dispatcherContext : dispatcherContexts) {
-            Object[] objects = buildParameter(dispatcherContext.getMethod(), t, dispatcherContainer);
-            try {
-                dispatcherContext.getMethod().invoke(dispatcherContext.getDispatcherListener(), objects);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            if (dispatcherContext.getGenericClass().isAssignableFrom(t.getClass())) {
+                Object[] objects = buildParameter(dispatcherContext.getMethod(), t, dispatcherContainer);
+                try {
+                    dispatcherContext.getMethod().invoke(dispatcherContext.getDispatcherListener(), objects);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
-
         }
     }
 
@@ -42,7 +43,6 @@ public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
     public void dispatch(T t) {
         dispatch(t, null);
     }
-
 
     private Object[] buildParameter(Method method, T t, DispatcherContainer dispatcherContainer){
         Object[] objects = new Object[method.getParameterTypes().length];
