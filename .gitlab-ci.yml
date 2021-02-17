@@ -7,4 +7,4 @@ deploy:
   only:
     - master
   script:
-    - 'mvn deploy -B -s'
+    - 'mvn deploy -B'
