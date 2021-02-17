@@ -1,0 +1,10 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: maven:3.5.2-jdk-8
+  only:
+    - master
+  script:
+    - 'mvn deploy -B -s'
