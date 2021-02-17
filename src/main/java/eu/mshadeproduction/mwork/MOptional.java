@@ -2,8 +2,10 @@ package eu.mshadeproduction.mwork;
 
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MOptional<T> {
 
@@ -55,6 +57,16 @@ public class MOptional<T> {
             runnable.run();
         return this;
     }
+
+    public<U> MOptional<U> map(Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+        if (!isPresent())
+            return empty();
+        else {
+            return MOptional.ofNullable(mapper.apply(value));
+        }
+    }
+
 
     @Override
     public String toString() {
