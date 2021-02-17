@@ -26,9 +26,12 @@ public final class MWork {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(JSONObject.class, new JSONObjectSerializer());
         simpleModule.addDeserializer(JSONObject.class, new JSONObjectDeserializer());
+        simpleModule.addSerializer(Receiver.class, new ReceiverSerializer());
+        simpleModule.addDeserializer(Receiver.class, new ReceiverDeserializer());
         this.objectMapper.registerModule(simpleModule);
         this.objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        this.objectMapper.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
+
 
         primitives.add(String.class);
         primitives.add(int.class);
@@ -77,6 +80,7 @@ public final class MWork {
             try {
                 return objectMapper.readValue(s, aClass);
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 throw new RuntimeException(e.getMessage(), e.getCause());
             }
     }

@@ -1,10 +1,12 @@
 package eu.mshadeproduction.mwork.service;
 
 import eu.mshadeproduction.mwork.MWork;
+import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class ServiceContext {
@@ -16,19 +18,26 @@ public class ServiceContext {
         this.method = method;
         for (Parameter parameter : method.getParameters()) {
             if (!parameter.isAnnotationPresent(TradeAction.class)) return;
-            params.put(parameter.getAnnotation(TradeAction.class).name(), parameter.getType());
+            params.put(parameter.getAnnotation(TradeAction.class).value(), parameter.getType());
         }
     }
 
-    public Object invokeMethode(ServiceCreator serviceCreator, Service service, JSONObject jsonObject) throws Exception{
+    public Object invokeMethode(Session session, Service service, JSONObject jsonObject) throws Exception{
         List<Object> objects = new ArrayList<>();
         for (Map.Entry<String, Class<?>> entry : params.entrySet()) {
-            if (MWork.get().isPrimitive(entry.getValue())) {
+            if (entry.getValue().isAssignableFrom(Session.class)) {
+                objects.add(session);
+            }else if (entry.getValue().isEnum()){
+                objects.add(Enum.valueOf(((Class) entry.getValue()), jsonObject.getString(entry.getKey())));
+            }else if (MWork.get().isPrimitive(entry.getValue())) {
                 objects.add(jsonObject.get(entry.getKey()));
-                //objects.add(serviceCreator.getTypeWrap().get(entry.getValue()).get(jsonObject.getString(entry.getKey())));
             } else objects.add(MWork.get().deserialize(jsonObject.get(entry.getKey()).toString(), entry.getValue()));
         }
         return method.invoke(service, objects.toArray(new Object[0]));
+    }
+
+    public int getParamsSize(){
+        return this.params.size();
     }
 
 

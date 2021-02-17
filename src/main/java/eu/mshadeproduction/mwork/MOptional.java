@@ -2,7 +2,10 @@ package eu.mshadeproduction.mwork;
 
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MOptional<T> {
 
@@ -40,10 +43,35 @@ public class MOptional<T> {
             consumer.accept(value);
         return this;
     }
+    public <S> S ifPresent(MConsumer<S,T> consumer, S other) {
+        if (value != null) return consumer.accept(value);
+        return other;
+    }
+
+    public T orElse(T other) {
+        return value != null ? value : other;
+    }
 
     public MOptional<T> ifNotPresent(Runnable runnable) {
         if (value == null)
             runnable.run();
         return this;
+    }
+
+    public<U> MOptional<U> map(Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper);
+        if (!isPresent())
+            return empty();
+        else {
+            return MOptional.ofNullable(mapper.apply(value));
+        }
+    }
+
+
+    @Override
+    public String toString() {
+        return "MOptional{" +
+                "value=" + value +
+                '}';
     }
 }

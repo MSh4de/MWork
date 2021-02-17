@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork;
+package eu.mshadeproduction.mwork.item;
 
 import java.util.HashMap;
 import java.util.Map;
