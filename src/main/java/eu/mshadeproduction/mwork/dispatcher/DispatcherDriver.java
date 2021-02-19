@@ -2,9 +2,9 @@ package eu.mshadeproduction.mwork.dispatcher;
 
 public interface DispatcherDriver<T> {
 
-    void register(DispatcherListener dispatcherListener);
+    void register(DispatcherListener<? extends T> dispatcherListener);
 
-    void unregister(DispatcherListener dispatcherListener);
+    void unregister(DispatcherListener<? extends T> dispatcherListener);
 
     void dispatch(T t, DispatcherContainer dispatcherContainer);
 
