@@ -1,28 +1,20 @@
 package eu.mshadeproduction.mwork;
 
-import eu.mshadeproduction.mwork.item.MColorType;
-import eu.mshadeproduction.mwork.item.MItemStack;
-import eu.mshadeproduction.mwork.item.MMaterial;
-import eu.mshadeproduction.mwork.player.PlayerItem;
-import eu.mshadeproduction.mwork.service.ServiceType;
-import eu.mshadeproduction.mwork.service.TradeRequest;
-import eu.mshadeproduction.mwork.service.TradeResponse;
-import eu.mshadeproduction.mwork.streaming.StreamingType;
+import eu.mshadeproduction.mwork.dispatcher.DefaultDispatcherDriver;
+import eu.mshadeproduction.mwork.streaming.Streaming;
+import eu.mshadeproduction.mwork.streaming.entity.PlayerJoinEventStreaming;
 import eu.mshadeproduction.mwork.streaming.entity.PlayerMoveEventStreaming;
-import eu.mshadeproduction.mwork.world.LocationItem;
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.json.JSONObject;
-
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @WebSocket
 public class Main {
+    public Main() {
+
+        DefaultDispatcherDriver<Streaming> driver = new DefaultDispatcherDriver<>();
+        driver.register(PlayerJoinEventStreaming.class, (event, dispatcherContainer) -> {
+
+        });
+    }
 
     /**
     private final DefaultPacketDriver defaultPacketDriver = (DefaultPacketDriver) MWork.get().getPacketDriver();
