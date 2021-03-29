@@ -1,31 +1,38 @@
 package eu.mshadeproduction.mwork.dispatcher;
 
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 public class DefaultDispatcherDriver<T> implements DispatcherDriver<T> {
 
-    public Queue<DispatcherListener<T>> dispatcherListeners = new ConcurrentLinkedQueue<>();
+    public Map<Class<?>, Queue<DispatcherListener<T>>> dispatcherListeners = new ConcurrentHashMap<>();
+    private static final DispatcherContainer dispatcherContainerEmpty = DispatcherContainer.empty();
+
 
     @Override
-    public void register(DispatcherListener<? extends T> dispatcherListener) {
-        dispatcherListeners.add((DispatcherListener<T>) dispatcherListener);
+    public <U extends T> void register(Class<U> aClass, DispatcherListener<U> dispatcherListener) {
+        dispatcherListeners.computeIfAbsent(aClass, a -> new ConcurrentLinkedQueue<>()).add((DispatcherListener<T>) dispatcherListener);
     }
 
     @Override
-    public void unregister(DispatcherListener<? extends T> dispatcherListener) {
-        dispatcherListeners.remove(dispatcherListener);
+    public void unregister(DispatcherListener<T> dispatcherListener) {
+        dispatcherListeners.entrySet().stream()
+                .filter(entry -> entry.getValue().contains(dispatcherListener))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .ifPresent(aClass -> dispatcherListeners.get(aClass).remove(dispatcherListener));
     }
 
     @Override
-    public void dispatch(T t, DispatcherContainer dispatcherContainer) {
-        dispatcherListeners.stream().filter(dispatcherListener -> dispatcherListener.getGenericClazz().isAssignableFrom(t.getClass())).forEach(dispatcherListener -> {
-            dispatcherListener.handle(t, dispatcherContainer);
-        });
+    public <U extends T> void dispatch(U u, DispatcherContainer dispatcherContainer) {
+        dispatcherListeners.computeIfAbsent(u.getClass(), a -> new ConcurrentLinkedQueue<>()).forEach(dispatcherListener -> dispatcherListener.handle(u, dispatcherContainer));
     }
 
     @Override
-    public void dispatch(T t) {
-        dispatch(t, DispatcherContainerBuilder.builder().build());
+    public <U extends T>  void dispatch(U u) {
+        dispatch(u, dispatcherContainerEmpty);
     }
 }
