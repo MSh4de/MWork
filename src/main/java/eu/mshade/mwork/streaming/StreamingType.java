@@ -1,10 +1,6 @@
 package eu.mshadeproduction.mwork.streaming;
 
 
-import eu.mshadeproduction.mwork.streaming.entity.PlayerJoinEventStreaming;
-import eu.mshadeproduction.mwork.streaming.entity.PlayerMoveEventStreaming;
-import eu.mshadeproduction.mwork.streaming.entity.PlayerMoveReduceEventStreaming;
-import eu.mshadeproduction.mwork.streaming.entity.PlayerQuiEventStreaming;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +8,7 @@ import java.util.Optional;
 
 public enum StreamingType {
 
-    PLAYER_JOIN_EVENT(PlayerJoinEventStreaming.class),
-    PLAYER_MOVE_EVENT(PlayerMoveEventStreaming.class),
-    PLAYER_MOVE_REDUCE_EVENT(PlayerMoveReduceEventStreaming.class),
-    PLAYER_QUIT_EVENT(PlayerQuiEventStreaming.class);
-
+    ;
 
     private final static Map<Class<? extends Streaming>, StreamingType> CLASS_STREAMING_TYPE_HASH_MAP = new HashMap<>();
     private final static Map<String, StreamingType> STRING_STREAMING_TYPE_MAP = new HashMap<>();
