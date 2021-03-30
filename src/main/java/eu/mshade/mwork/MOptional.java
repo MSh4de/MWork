@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork;
+package eu.mshade.mwork;
 
 
 import java.util.NoSuchElementException;

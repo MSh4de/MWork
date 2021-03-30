@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork.dispatcher;
+package eu.mshade.mwork.dispatcher;
 
 public final class DispatcherContainerBuilder {
 

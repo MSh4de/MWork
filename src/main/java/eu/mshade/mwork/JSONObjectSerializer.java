@@ -1,4 +1,4 @@
-package eu.mshadeproduction.mwork;
+package eu.mshade.mwork;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
