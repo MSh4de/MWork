@@ -1,12 +1,12 @@
 package eu.mshade.mwork.nametag.layer.primitive;
 
+import eu.mshade.mwork.nametag.NameTagAdaptor;
 import eu.mshade.mwork.nametag.NameTagDriver;
-import eu.mshade.mwork.nametag.NameTagLayer;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.ByteBinaryTag;
 
 
-public class NameTagByteLayer extends NameTagLayer<Byte> {
+public class NameTagByteLayer implements NameTagAdaptor<Byte> {
 
     @Override
     public Byte deserialize(NameTagDriver nameTagDriver, Class<?> aClass, BinaryTag tag) {
