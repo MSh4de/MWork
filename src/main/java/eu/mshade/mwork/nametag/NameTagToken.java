@@ -11,6 +11,7 @@ public abstract class NameTagToken<T> {
         this.type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
+
     public ParameterizedType getTypeToken() {
         return (ParameterizedType) type;
     }
