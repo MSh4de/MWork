@@ -9,6 +9,7 @@ import java.util.function.Function;
 public class MOptional<T> {
 
     private final T value;
+    private Consumer<Exception> exceptionConsumer;
 
     private MOptional(T value) {
         this.value = value;
@@ -37,13 +38,24 @@ public class MOptional<T> {
         return value != null;
     }
 
-    public MOptional<T> ifPresent(Consumer<? super T> consumer) {
-        if (value != null)
-            consumer.accept(value);
+    public MOptional<T> ifPresent(MConsumer<? super T> consumer) throws Exception {
+        if (value != null){
+            try {
+                consumer.accept(value);
+            }catch (Exception e){
+                exceptionConsumer.accept(e);
+            }
+        }
         return this;
     }
-    public <S> S ifPresent(MConsumer<S,T> consumer, S other) {
-        if (value != null) return consumer.accept(value);
+    public <S> S ifPresent(MFunction<T, S> consumer, S other) throws Exception{
+        if (value != null) {
+            try {
+                return consumer.apply(value);
+            }catch (Exception e){
+                exceptionConsumer.accept(e);
+            }
+        }
         return other;
     }
 
@@ -51,9 +63,14 @@ public class MOptional<T> {
         return value != null ? value : other;
     }
 
-    public MOptional<T> ifNotPresent(Runnable runnable) {
-        if (value == null)
-            runnable.run();
+    public MOptional<T> ifNotPresent(MConsumer<Void> consumer) throws Exception {
+        if (value == null){
+            try {
+                consumer.accept(null);
+            }catch (Exception e){
+                exceptionConsumer.accept(e);
+            }
+        }
         return this;
     }
 
@@ -66,6 +83,10 @@ public class MOptional<T> {
         }
     }
 
+    public MOptional<T> exception(Consumer<Exception> consumer){
+        this.exceptionConsumer = consumer;
+        return this;
+    }
 
     @Override
     public String toString() {
