@@ -1,9 +1,8 @@
+package eu.mshade.test;
+
 import eu.mshade.mwork.nametag.NameTagDriver;
-import eu.mshade.mwork.nametag.NameTagToken;
-import net.kyori.adventure.nbt.BinaryTagIO;
 
 import java.io.File;
-import java.util.List;
 
 public class Test  {
 
@@ -14,7 +13,7 @@ public class Test  {
         System.out.println(file);
         file.createNewFile();
 
-
+        /*
         NameTagToken<List<String>> token = new NameTagToken<>(){};
 
         System.out.println(token.getTypeToken().getOwnerType());
@@ -22,9 +21,11 @@ public class Test  {
 
         System.out.println(token.getTypeToken().getActualTypeArguments()[0]);
 
-        AccountContext accountContext = nameTagDriver.deserialize(BinaryTagIO.readCompressedPath(file.toPath()), AccountContext.class);
-        System.out.println();
-        System.out.println(accountContext.getName());
+         */
+
+        System.out.println(System.getProperty("user.dir"));
+
+        //AccountContext accountContext = nameTagDriver.deserialize(BinaryTagIO.readCompressedPath(file.toPath()), AccountContext.class);
 
 
     }
@@ -36,7 +37,6 @@ public class Test  {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("HELLO");
         new Test();
     }
 
