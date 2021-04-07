@@ -5,11 +5,13 @@ import eu.mshade.mwork.nametag.NameTagDriver;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.ShortBinaryTag;
 
+import java.lang.reflect.Type;
+
 
 public class NameTagShortLayer implements NameTagAdaptor<Short> {
 
     @Override
-    public Short deserialize(NameTagDriver nameTagDriver, Class<?> aClass, BinaryTag tag) {
+    public Short deserialize(NameTagDriver nameTagDriver, Type type, BinaryTag tag) {
         ShortBinaryTag shortTag = (ShortBinaryTag) tag;
         return shortTag.value();
     }

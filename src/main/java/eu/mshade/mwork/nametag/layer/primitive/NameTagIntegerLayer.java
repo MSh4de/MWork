@@ -5,10 +5,12 @@ import eu.mshade.mwork.nametag.NameTagDriver;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.IntBinaryTag;
 
+import java.lang.reflect.Type;
+
 public class NameTagIntegerLayer implements NameTagAdaptor<Integer> {
     
     @Override
-    public Integer deserialize(NameTagDriver nameTagDriver, Class<?> aClass, BinaryTag tag) {
+    public Integer deserialize(NameTagDriver nameTagDriver, Type type, BinaryTag tag) {
         IntBinaryTag intTag = (IntBinaryTag) tag;
         return intTag.value();
     }

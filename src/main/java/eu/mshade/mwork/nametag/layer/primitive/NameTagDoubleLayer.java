@@ -5,11 +5,13 @@ import eu.mshade.mwork.nametag.NameTagDriver;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.DoubleBinaryTag;
 
+import java.lang.reflect.Type;
+
 
 public class NameTagDoubleLayer implements NameTagAdaptor<Double> {
 
     @Override
-    public Double deserialize(NameTagDriver nameTagDriver, Class<?> aClass, BinaryTag tag) {
+    public Double deserialize(NameTagDriver nameTagDriver, Type type, BinaryTag tag) {
         DoubleBinaryTag doubleT = (DoubleBinaryTag) tag;
         return doubleT.value();
     }

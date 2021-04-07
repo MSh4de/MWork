@@ -5,11 +5,13 @@ import eu.mshade.mwork.nametag.NameTagDriver;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.ByteBinaryTag;
 
+import java.lang.reflect.Type;
+
 
 public class NameTagByteLayer implements NameTagAdaptor<Byte> {
 
     @Override
-    public Byte deserialize(NameTagDriver nameTagDriver, Class<?> aClass, BinaryTag tag) {
+    public Byte deserialize(NameTagDriver nameTagDriver, Type type, BinaryTag tag) {
         ByteBinaryTag byteT = (ByteBinaryTag) tag;
         return byteT.value();
     }
