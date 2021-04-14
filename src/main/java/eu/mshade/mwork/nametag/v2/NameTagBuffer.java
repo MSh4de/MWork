@@ -3,10 +3,10 @@ package eu.mshade.mwork.nametag.v2;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public interface NameTagBuffer<T extends BinaryTag<?>> {
+public interface NameTagBuffer {
 
-    void write(NameTagBufferDriver nameTagBufferDriver, DataOutputStream outputStream, T t) throws Exception;
+    void write(NameTagBufferDriver nameTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception;
 
-    T read(NameTagBufferDriver nameTagBufferDriver, DataInputStream inputStream) throws Exception;
+    BinaryTag<?> read(NameTagBufferDriver nameTagBufferDriver, DataInputStream inputStream) throws Exception;
 
 }

@@ -5,6 +5,7 @@ import eu.mshade.mwork.nametag.v2.BinaryTagType;
 import eu.mshade.mwork.nametag.v2.NameTagBuffer;
 import eu.mshade.mwork.nametag.v2.NameTagBufferDriver;
 import eu.mshade.mwork.nametag.v2.entity.CompoundBinaryTag;
+import eu.mshade.mwork.nametag.v2.entity.EndBinaryTag;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,7 +23,7 @@ public class CompoundBinaryTagBuffer implements NameTagBuffer {
             outputStream.writeShort(name.length);
             outputStream.write(name);
             nameTagBufferDriver.getBufferByType(entry.getValue().getType()).write(nameTagBufferDriver, outputStream, entry.getValue());
-            outputStream.write(0);
+            outputStream.write(EndBinaryTag.TAG.getValue());
         }
     }
 
