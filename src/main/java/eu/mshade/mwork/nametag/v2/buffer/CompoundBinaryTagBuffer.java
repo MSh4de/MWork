@@ -23,8 +23,8 @@ public class CompoundBinaryTagBuffer implements NameTagBuffer {
             outputStream.writeShort(name.length);
             outputStream.write(name);
             nameTagBufferDriver.getBufferByType(entry.getValue().getType()).write(nameTagBufferDriver, outputStream, entry.getValue());
-            outputStream.write(EndBinaryTag.TAG.getValue());
         }
+        outputStream.write(EndBinaryTag.TAG.getValue());
     }
 
     @Override
