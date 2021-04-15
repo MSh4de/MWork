@@ -3,10 +3,10 @@ package eu.mshade.mwork.nametag.v2.entity;
 import eu.mshade.mwork.nametag.v2.BinaryTag;
 import eu.mshade.mwork.nametag.v2.BinaryTagType;
 
-public class ZstListBinaryTag<T extends BinaryTag<?>> extends ListBinaryTag<T> {
+public class ZstdListBinaryTag<T extends BinaryTag<?>> extends ListBinaryTag<T> {
 
 
-    public ZstListBinaryTag(Class<T> aClass) {
+    public ZstdListBinaryTag(Class<T> aClass) {
         super(aClass);
     }
 
