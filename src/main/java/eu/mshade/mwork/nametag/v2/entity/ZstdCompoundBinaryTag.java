@@ -2,7 +2,7 @@ package eu.mshade.mwork.nametag.v2.entity;
 
 import eu.mshade.mwork.nametag.v2.BinaryTagType;
 
-public class ZstCompoundBinaryTag extends CompoundBinaryTag{
+public class ZstdCompoundBinaryTag extends CompoundBinaryTag{
 
     @Override
     public BinaryTagType getType() {
