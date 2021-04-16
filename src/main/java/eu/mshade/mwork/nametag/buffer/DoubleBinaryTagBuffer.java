@@ -1,9 +1,9 @@
-package eu.mshade.mwork.nametag.v2.buffer;
+package eu.mshade.mwork.nametag.buffer;
 
-import eu.mshade.mwork.nametag.v2.BinaryTag;
-import eu.mshade.mwork.nametag.v2.NameTagBuffer;
-import eu.mshade.mwork.nametag.v2.NameTagBufferDriver;
-import eu.mshade.mwork.nametag.v2.entity.DoubleBinaryTag;
+import eu.mshade.mwork.nametag.BinaryTag;
+import eu.mshade.mwork.nametag.NameTagBuffer;
+import eu.mshade.mwork.nametag.NameTagBufferDriver;
+import eu.mshade.mwork.nametag.entity.DoubleBinaryTag;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
