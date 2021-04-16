@@ -1,7 +1,7 @@
-package eu.mshade.mwork.nametag.v2.entity;
+package eu.mshade.mwork.nametag.entity;
 
-import eu.mshade.mwork.nametag.v2.BinaryTag;
-import eu.mshade.mwork.nametag.v2.BinaryTagType;
+import eu.mshade.mwork.nametag.BinaryTag;
+import eu.mshade.mwork.nametag.BinaryTagType;
 
 public class EndBinaryTag implements BinaryTag<Integer> {
 

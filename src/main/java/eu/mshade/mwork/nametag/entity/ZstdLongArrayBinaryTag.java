@@ -1,6 +1,6 @@
-package eu.mshade.mwork.nametag.v2.entity;
+package eu.mshade.mwork.nametag.entity;
 
-import eu.mshade.mwork.nametag.v2.BinaryTagType;
+import eu.mshade.mwork.nametag.BinaryTagType;
 
 public class ZstdLongArrayBinaryTag extends LongArrayBinaryTag {
 
