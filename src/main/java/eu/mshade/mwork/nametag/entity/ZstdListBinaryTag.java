@@ -5,7 +5,6 @@ import eu.mshade.mwork.nametag.v2.BinaryTagType;
 
 public class ZstdListBinaryTag<T extends BinaryTag<?>> extends ListBinaryTag<T> {
 
-
     public ZstdListBinaryTag(Class<T> aClass) {
         super(aClass);
     }

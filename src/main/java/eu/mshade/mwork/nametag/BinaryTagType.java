@@ -1,6 +1,6 @@
 package eu.mshade.mwork.nametag.v2;
 
-import eu.mshade.mwork.nametag.v2.entity.*;
+import eu.mshade.mwork.nametag.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public enum BinaryTagType {
 
     ZSTD_BYTE_ARRAY(ZstdByteArrayBinaryTag.class, 13),
     ZSTD_LIST(ZstdByteArrayBinaryTag.class, 14),
-    ZSTD_COMPOUND(ZstCompoundBinaryTag.class, 15),
+    ZSTD_COMPOUND(ZstdCompoundBinaryTag.class, 15),
     ZSTD_INTEGER_ARRAY(ZstdIntegerArrayBinaryTag.class, 16),
     ZSTD_LONG_ARRAY(ZstdLongArrayBinaryTag.class, 17);
 

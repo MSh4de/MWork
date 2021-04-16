@@ -13,7 +13,7 @@ public class ByteArrayBinaryTagBuffer implements NameTagBuffer {
     @Override
     public void write(NameTagBufferDriver nameTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
         ByteArrayBinaryTag byteArrayBinaryTag = (ByteArrayBinaryTag) binaryTag;
-        outputStream.write(byteArrayBinaryTag.getValue().length);
+        outputStream.writeInt(byteArrayBinaryTag.getValue().length);
         outputStream.write(byteArrayBinaryTag.getValue());
 
     }

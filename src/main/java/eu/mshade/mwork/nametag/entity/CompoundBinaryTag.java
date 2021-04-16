@@ -41,28 +41,56 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>> {
 
     public void putInt(String key, int value){ this.putBinaryTag(key, new IntegerBinaryTag(value)); }
 
+    public int getInt(String key){
+        return (int) this.getBinaryTag(key).getValue();
+    }
+
     public void putLong(String key, long value){
         this.putBinaryTag(key, new LongBinaryTag(value));
+    }
+
+    public long getLong(String key){
+        return (long) this.getBinaryTag(key).getValue();
     }
 
     public void putDouble(String key, double value){
         this.putBinaryTag(key, new DoubleBinaryTag(value));
     }
 
+    public double getDouble(String key){
+        return (double) this.getBinaryTag(key).getValue();
+    }
+
     public void putByteArray(String key, byte[] value){
         this.putBinaryTag(key, new ByteArrayBinaryTag(value));
+    }
+
+    public byte[] getByteArray(String key){
+        return (byte[]) this.getBinaryTag(key).getValue();
     }
 
     public void putString(String key, String value){
         this.putBinaryTag(key, new StringBinaryTag(value));
     }
 
+    public String getString(String key){
+        return (String) this.getBinaryTag(key).getValue();
+    }
+
     public void putIntArray(String key, int[] value){
         this.putBinaryTag(key, new IntegerArrayBinaryTag(value));
     }
 
+    public int[] getIntArray(String key){
+        return (int[]) this.getBinaryTag(key).getValue();
+    }
+
     public void putLongArray(String key, long[] value){
         this.putBinaryTag(key, new LongArrayBinaryTag(value));
+    }
+
+    public long[] getLongArray(String key){
+        return (long[]) this.getBinaryTag(key).getValue();
     }
 
     @Override
