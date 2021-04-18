@@ -1,10 +1,10 @@
-package eu.mshade.mwork.nametag.buffer;
+package eu.mshade.mwork.binarytag.buffer;
 
 import com.github.luben.zstd.Zstd;
-import eu.mshade.mwork.nametag.BinaryTag;
-import eu.mshade.mwork.nametag.BinaryTagBuffer;
-import eu.mshade.mwork.nametag.NameTagBufferDriver;
-import eu.mshade.mwork.nametag.entity.LongArrayBinaryTag;
+import eu.mshade.mwork.binarytag.BinaryTag;
+import eu.mshade.mwork.binarytag.BinaryTagBuffer;
+import eu.mshade.mwork.binarytag.BinaryTagBufferDriver;
+import eu.mshade.mwork.binarytag.entity.LongArrayBinaryTag;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,7 +13,7 @@ import java.io.DataOutputStream;
 
 public class ZstdLongArrayBinaryBuffer implements BinaryTagBuffer {
     @Override
-    public void write(NameTagBufferDriver nameTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
+    public void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
         LongArrayBinaryTag longArrayBinaryTag = (LongArrayBinaryTag) binaryTag;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
@@ -28,7 +28,7 @@ public class ZstdLongArrayBinaryBuffer implements BinaryTagBuffer {
     }
 
     @Override
-    public BinaryTag<?> read(NameTagBufferDriver nameTagBufferDriver, DataInputStream inputStream) throws Exception {
+    public BinaryTag<?> read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
         int realSize = inputStream.readInt();
         int compressSize = inputStream.readInt();
         byte[] payload = new byte[compressSize];
