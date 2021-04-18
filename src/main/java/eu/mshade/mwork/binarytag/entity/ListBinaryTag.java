@@ -1,8 +1,8 @@
-package eu.mshade.mwork.nametag.entity;
+package eu.mshade.mwork.binarytag.entity;
 
-import eu.mshade.mwork.nametag.BinaryTag;
-import eu.mshade.mwork.nametag.BinaryTagType;
-import eu.mshade.mwork.nametag.ZstdBinaryTag;
+import eu.mshade.mwork.binarytag.BinaryTag;
+import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.ArrayList;
 import java.util.Iterator;
