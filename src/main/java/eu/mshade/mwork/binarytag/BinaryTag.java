@@ -1,4 +1,4 @@
-package eu.mshade.mwork.nametag;
+package eu.mshade.mwork.binarytag;
 
 public interface BinaryTag<T> {
 
