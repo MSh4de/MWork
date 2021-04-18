@@ -1,6 +1,6 @@
-package eu.mshade.mwork.nametag;
+package eu.mshade.mwork.binarytag;
 
-import eu.mshade.mwork.nametag.entity.CompoundBinaryTag;
+import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 
 import java.io.File;
 import java.io.InputStream;

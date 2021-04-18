@@ -1,6 +1,6 @@
-package eu.mshade.mwork.nametag;
+package eu.mshade.mwork.binarytag;
 
-import eu.mshade.mwork.nametag.entity.*;
+import eu.mshade.mwork.binarytag.entity.*;
 
 import java.util.*;
 

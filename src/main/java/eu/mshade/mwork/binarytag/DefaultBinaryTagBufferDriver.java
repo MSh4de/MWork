@@ -1,7 +1,7 @@
-package eu.mshade.mwork.nametag;
+package eu.mshade.mwork.binarytag;
 
-import eu.mshade.mwork.nametag.buffer.*;
-import eu.mshade.mwork.nametag.entity.CompoundBinaryTag;
+import eu.mshade.mwork.binarytag.buffer.*;
+import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

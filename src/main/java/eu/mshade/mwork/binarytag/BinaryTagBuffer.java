@@ -1,4 +1,4 @@
-package eu.mshade.mwork.nametag;
+package eu.mshade.mwork.binarytag;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
