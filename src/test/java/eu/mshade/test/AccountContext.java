@@ -1,14 +1,17 @@
-package eu.mshade.test;
+package eu.mshade.mwork;
 
-import java.util.ArrayList;
-import java.util.List;
+import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.marshal.BinaryTagProperty;
+
+import java.util.Objects;
 
 public class AccountContext {
 
     private String name;
     private int age;
     private long time;
-    private List<Location> locations = new ArrayList<>();
+    @BinaryTagProperty(BinaryTagType.ZSTD_INTEGER_ARRAY)
+    private int[] ints = new int[65536];
 
 
     private AccountContext() {
@@ -18,6 +21,10 @@ public class AccountContext {
         this.name = name;
         this.age = age;
         this.time = System.currentTimeMillis();
+    }
+
+    public int[] getInts() {
+        return ints;
     }
 
     public String getName() {
@@ -32,21 +39,20 @@ public class AccountContext {
         return time;
     }
 
-    public void addLocation(Location location){
-        this.locations.add(location);
-    }
 
-    public List<Location> getLocations() {
-        return locations;
+
+    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountContext that = (AccountContext) o;
+        return age == that.age && Objects.equals(name, that.name);
     }
 
     @Override
-    public String toString() {
-        return "AccountContext{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", time=" + time +
-                ", locations=" + locations +
-                '}';
+    public int hashCode() {
+        return Objects.hash(name, age);
     }
 }

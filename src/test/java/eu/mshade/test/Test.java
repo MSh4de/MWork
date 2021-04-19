@@ -1,32 +1,36 @@
-package eu.mshade.test;
+package eu.mshade.mwork;
 
-import eu.mshade.mwork.nametag.NameTagDriver;
+import eu.mshade.mwork.binarytag.DefaultBinaryTagBufferDriver;
+import eu.mshade.mwork.binarytag.DefaultBinaryTagMarshal;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 public class Test  {
 
 
     public Test() throws Exception {
-        NameTagDriver nameTagDriver = new NameTagDriver();
-        File file = new File("test.dat");
-        System.out.println(file);
-        file.createNewFile();
 
-        /*
-        NameTagToken<List<String>> token = new NameTagToken<>(){};
+        DefaultBinaryTagBufferDriver defaultBinaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
+        DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
 
-        System.out.println(token.getTypeToken().getOwnerType());
-        System.out.println(List.class);
-
-        System.out.println(token.getTypeToken().getActualTypeArguments()[0]);
-
-         */
-
-        System.out.println(System.getProperty("user.dir"));
-
-        //AccountContext accountContext = nameTagDriver.deserialize(BinaryTagIO.readCompressedPath(file.toPath()), AccountContext.class);
-
+        AccountContext accountContext = new AccountContext("Oleksandr", 17);
+        int i = 0;
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < 256; y++) {
+                    accountContext.getInts()[i++] = i;
+                }
+            }
+        }
+        System.out.println(profile(() -> {
+            try {
+                defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new FileOutputStream("test.dat"));
+                System.out.println(defaultBinaryTagMarshal.unMarshal(AccountContext.class, defaultBinaryTagBufferDriver.readCompoundBinaryTag(new File("test.dat"))).getInts().length);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        })+" ms");
 
     }
 
@@ -45,6 +49,7 @@ public class Test  {
         final int floor = (int) loc;
         return floor == loc ? floor : floor - (int) (Double.doubleToRawLongBits(loc) >>> 63);
     }
+
 
 
 }
