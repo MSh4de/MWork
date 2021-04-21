@@ -39,7 +39,6 @@ public class CompoundBinaryTagBuffer implements BinaryTagBuffer {
                 byte[] bytes = new byte[length];
                 inputStream.readFully(bytes);
                 String name = new String(bytes, StandardCharsets.UTF_8);
-                System.out.println(tagTypeById);
                 compoundBinaryTag.getValue().put(name, binaryTagBufferDriver.getBufferByType(tagTypeById).read(binaryTagBufferDriver, inputStream));
             }
         } while (tagTypeById != BinaryTagType.END);
