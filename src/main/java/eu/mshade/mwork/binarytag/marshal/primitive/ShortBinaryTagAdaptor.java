@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 
 public class ShortBinaryTagAdaptor implements BinaryTagAdaptor<Object> {
     @Override
-    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {
+    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal,  Type type, Object o) throws Exception {
         return new ShortBinaryTag((Short) o);
     }
 
