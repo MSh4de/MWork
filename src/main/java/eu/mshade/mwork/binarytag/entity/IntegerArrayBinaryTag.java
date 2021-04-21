@@ -2,11 +2,12 @@ package eu.mshade.mwork.binarytag.entity;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.Arrays;
 
-public class IntegerArrayBinaryTag implements BinaryTag<int[]>, ZstdBinaryTag<ZstdIntegerArrayBinaryTag> {
+public class IntegerArrayBinaryTag implements BinaryTag<int[]>, ZstdBinaryTag<ZstdIntegerArrayBinaryTag>, ShadeBinaryTag<ShadeIntegerArrayBinaryTag> {
 
     private final int[] ints;
 
@@ -47,5 +48,11 @@ public class IntegerArrayBinaryTag implements BinaryTag<int[]>, ZstdBinaryTag<Zs
     @Override
     public ZstdIntegerArrayBinaryTag toZstd() {
         return new ZstdIntegerArrayBinaryTag(ints);
+    }
+
+
+    @Override
+    public ShadeIntegerArrayBinaryTag toShade() {
+        return new ShadeIntegerArrayBinaryTag(ints);
     }
 }

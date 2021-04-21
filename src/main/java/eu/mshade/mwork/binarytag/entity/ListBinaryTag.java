@@ -2,15 +2,14 @@ package eu.mshade.mwork.binarytag.entity;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class ListBinaryTag implements BinaryTag<Iterable<BinaryTag<?>>>, Iterable<BinaryTag<?>>, ZstdBinaryTag<ZstdListBinaryTag> {
+public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<Iterable<BinaryTag<?>>>, ZstdBinaryTag<ZstdListBinaryTag>, ShadeBinaryTag<ShadeListBinaryTag> {
 
-    private List<BinaryTag<?>> binaryTagList = new ArrayList<>();
     private final BinaryTagType elementType;
 
     public ListBinaryTag(BinaryTagType elementType) {
@@ -18,19 +17,10 @@ public class ListBinaryTag implements BinaryTag<Iterable<BinaryTag<?>>>, Iterabl
     }
 
     public ListBinaryTag(List<BinaryTag<?>> binaryTagList, BinaryTagType elementType) {
-        this.binaryTagList = binaryTagList;
+        super(binaryTagList);
         this.elementType = elementType;
     }
 
-    public void add(BinaryTag<?> binaryTag){
-        if (binaryTag.getType() == this.elementType) {
-            this.binaryTagList.add(binaryTag);
-        }
-    }
-
-    public int size(){
-        return this.binaryTagList.size();
-    }
 
     @Override
     public BinaryTagType getType() {
@@ -39,7 +29,7 @@ public class ListBinaryTag implements BinaryTag<Iterable<BinaryTag<?>>>, Iterabl
 
     @Override
     public Iterable<BinaryTag<?>> getValue() {
-        return binaryTagList;
+        return this;
     }
 
     public BinaryTagType getElementType() {
@@ -47,13 +37,12 @@ public class ListBinaryTag implements BinaryTag<Iterable<BinaryTag<?>>>, Iterabl
     }
 
     @Override
-    public Iterator<BinaryTag<?>> iterator() {
-        return binaryTagList.iterator();
+    public ZstdListBinaryTag toZstd() {
+        return new ZstdListBinaryTag(this, elementType);
     }
 
-
     @Override
-    public ZstdListBinaryTag toZstd() {
-        return new ZstdListBinaryTag(binaryTagList, elementType);
+    public ShadeListBinaryTag toShade() {
+        return new ShadeListBinaryTag(this, elementType);
     }
 }

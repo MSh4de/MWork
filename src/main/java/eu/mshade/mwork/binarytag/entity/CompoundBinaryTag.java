@@ -2,13 +2,14 @@ package eu.mshade.mwork.binarytag.entity;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag> {
+public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag>, ShadeBinaryTag<ShadeCompoundBinaryTag> {
 
     private final Map<String, BinaryTag<?>> binaryTagMap;
 
@@ -132,6 +133,12 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
 
     @Override
     public ZstdCompoundBinaryTag toZstd() {
-        return new ZstdCompoundBinaryTag();
+        return new ZstdCompoundBinaryTag(binaryTagMap);
+    }
+
+
+    @Override
+    public ShadeCompoundBinaryTag toShade() {
+        return new ShadeCompoundBinaryTag(binaryTagMap);
     }
 }

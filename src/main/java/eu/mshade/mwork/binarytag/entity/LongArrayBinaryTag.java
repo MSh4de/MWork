@@ -2,11 +2,12 @@ package eu.mshade.mwork.binarytag.entity;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.Arrays;
 
-public class LongArrayBinaryTag implements BinaryTag<long[]>, ZstdBinaryTag<ZstdLongArrayBinaryTag> {
+public class LongArrayBinaryTag implements BinaryTag<long[]>, ZstdBinaryTag<ZstdLongArrayBinaryTag>, ShadeBinaryTag<ShadeLongArrayBinaryTag> {
 
     private final long[] longs;
 
@@ -47,5 +48,10 @@ public class LongArrayBinaryTag implements BinaryTag<long[]>, ZstdBinaryTag<Zstd
     @Override
     public ZstdLongArrayBinaryTag toZstd() {
         return new ZstdLongArrayBinaryTag(longs);
+    }
+
+    @Override
+    public ShadeLongArrayBinaryTag toShade() {
+        return new ShadeLongArrayBinaryTag(longs);
     }
 }
