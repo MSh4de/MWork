@@ -27,7 +27,7 @@ public class CompoundBinaryTagAdaptor implements BinaryTagAdaptor<Object>{
         for (Field field : aClass.getDeclaredFields()) {
             field.setAccessible(true);
             String name = binaryTagMarshal.getNameOf(field);
-            field.set(o, binaryTagMarshal.getBinaryTagAdaptorOf(field).deserialize(binaryTagMarshal, field.getType(), compoundBinaryTag.getBinaryTag(name)));
+            field.set(o, binaryTagMarshal.getBinaryTagAdaptorOf(field).deserialize(binaryTagMarshal, field.getGenericType(), compoundBinaryTag.getBinaryTag(name)));
         }
         return o;
     }
