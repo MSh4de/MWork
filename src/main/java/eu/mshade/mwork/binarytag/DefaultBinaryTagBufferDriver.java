@@ -27,11 +27,19 @@ public class DefaultBinaryTagBufferDriver implements BinaryTagBufferDriver {
         nameTagBufferMap.put(BinaryTagType.INTEGER_ARRAY, new IntegerArrayBinaryTagBuffer());
         nameTagBufferMap.put(BinaryTagType.LONG_ARRAY, new LongArrayBinaryTagBuffer());
 
+        nameTagBufferMap.put(BinaryTagType.BOOLEAN, new BooleanBinaryTagBuffer());
+
+        nameTagBufferMap.put(BinaryTagType.SHADE_BYTE_ARRAY, new ShadeByteArrayBinaryTagBuffer());
+        nameTagBufferMap.put(BinaryTagType.SHADE_LIST, new ShadeListBinaryTagBuffer());
+        nameTagBufferMap.put(BinaryTagType.SHADE_COMPOUND, new ShadeCompoundBinaryTagBuffer());
+        nameTagBufferMap.put(BinaryTagType.SHADE_INTEGER_ARRAY, new ShadeIntegerArrayBinaryTagBuffer());
+        nameTagBufferMap.put(BinaryTagType.SHADE_LONG_ARRAY, new ShadeLongArrayBinaryTagBuffer());
+
         nameTagBufferMap.put(BinaryTagType.ZSTD_BYTE_ARRAY, new ZstdByteArrayBinaryTagBuffer());
         nameTagBufferMap.put(BinaryTagType.ZSTD_LIST, new ZstdListBinaryTagBuffer());
         nameTagBufferMap.put(BinaryTagType.ZSTD_COMPOUND, new ZstdCompoundBinaryTagBuffer());
         nameTagBufferMap.put(BinaryTagType.ZSTD_INTEGER_ARRAY, new ZstdIntegerArrayBinaryTagBuffer());
-        nameTagBufferMap.put(BinaryTagType.ZSTD_LONG_ARRAY, new ZstdLongArrayBinaryBuffer());
+        nameTagBufferMap.put(BinaryTagType.ZSTD_LONG_ARRAY, new ZstdLongArrayBinaryTagBuffer());
     }
 
     @Override
