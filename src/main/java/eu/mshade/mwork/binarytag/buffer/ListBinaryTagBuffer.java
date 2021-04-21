@@ -1,9 +1,9 @@
 package eu.mshade.mwork.binarytag.buffer;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
-import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.BinaryTagBuffer;
 import eu.mshade.mwork.binarytag.BinaryTagBufferDriver;
+import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
 
 import java.io.DataInputStream;
@@ -27,7 +27,7 @@ public class ListBinaryTagBuffer implements BinaryTagBuffer {
     public ListBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
         BinaryTagType tagType = BinaryTagType.getTagTypeById(inputStream.readByte());
         ListBinaryTag listBinaryTag = new ListBinaryTag(tagType);
-        BinaryTagBuffer binaryTagBuffer = binaryTagBufferDriver.getBufferByType(BinaryTagType.getTagTypeById(inputStream.readByte()));
+        BinaryTagBuffer binaryTagBuffer = binaryTagBufferDriver.getBufferByType(tagType);
         int length = inputStream.readInt();
         for (int i = 0; i < length; i++) {
             listBinaryTag.add(binaryTagBuffer.read(binaryTagBufferDriver, inputStream));
