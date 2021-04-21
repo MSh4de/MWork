@@ -1,8 +1,7 @@
-package eu.mshade.mwork;
+package eu.mshade.test;
 
-import eu.mshade.mwork.binarytag.BinaryTagType;
-import eu.mshade.mwork.binarytag.marshal.BinaryTagProperty;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AccountContext {
@@ -10,12 +9,7 @@ public class AccountContext {
     private String name;
     private int age;
     private long time;
-    @BinaryTagProperty(BinaryTagType.ZSTD_INTEGER_ARRAY)
-    private int[] ints = new int[65536];
-
-
-    private AccountContext() {
-    }
+    private List<Location> locations = new ArrayList<>();
 
     public AccountContext(String name, int age) {
         this.name = name;
@@ -23,8 +17,8 @@ public class AccountContext {
         this.time = System.currentTimeMillis();
     }
 
-    public int[] getInts() {
-        return ints;
+    public List<Location> getLocations() {
+        return locations;
     }
 
     public String getName() {
@@ -40,8 +34,6 @@ public class AccountContext {
     }
 
 
-
-    
 
     @Override
     public boolean equals(Object o) {
