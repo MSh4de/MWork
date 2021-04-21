@@ -22,11 +22,18 @@ public enum BinaryTagType {
     LONG_ARRAY(LongArrayBinaryTag.class,12),
 
     BOOLEAN(BooleanBinaryTag.class, 13),
-    ZSTD_BYTE_ARRAY(ZstdByteArrayBinaryTag.class, 14),
-    ZSTD_LIST(ZstdByteArrayBinaryTag.class, 15),
-    ZSTD_COMPOUND(ZstdCompoundBinaryTag.class, 16),
-    ZSTD_INTEGER_ARRAY(ZstdIntegerArrayBinaryTag.class, 17),
-    ZSTD_LONG_ARRAY(ZstdLongArrayBinaryTag.class, 18);
+
+    SHADE_BYTE_ARRAY(ShadeByteArrayBinaryTag.class, 14),
+    SHADE_LIST(ShadeListBinaryTag.class, 15),
+    SHADE_COMPOUND(ShadeCompoundBinaryTag.class, 16),
+    SHADE_INTEGER_ARRAY(ShadeIntegerArrayBinaryTag.class, 17),
+    SHADE_LONG_ARRAY(ShadeLongArrayBinaryTag.class, 18),
+
+    ZSTD_BYTE_ARRAY(ZstdByteArrayBinaryTag.class, 19),
+    ZSTD_LIST(ZstdListBinaryTag.class, 20),
+    ZSTD_COMPOUND(ZstdCompoundBinaryTag.class, 21),
+    ZSTD_INTEGER_ARRAY(ZstdIntegerArrayBinaryTag.class, 22),
+    ZSTD_LONG_ARRAY(ZstdLongArrayBinaryTag.class, 23);
 
 
 
