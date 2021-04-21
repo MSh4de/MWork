@@ -13,8 +13,4 @@ public class ZstdIntegerArrayBinaryTagAdaptor extends IntegerArrayBinaryTagAdapt
         return ((IntegerArrayBinaryTag) super.serialize(binaryTagMarshal, type, o)).toZstd();
     }
 
-    @Override
-    public Object deserialize(BinaryTagMarshal binaryTagMarshal, Type type, BinaryTag<?> binaryTag) throws Exception {
-        return super.deserialize(binaryTagMarshal, type, binaryTag);
-    }
 }

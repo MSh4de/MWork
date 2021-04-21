@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 public class IntegerArrayBinaryTagAdaptor implements BinaryTagAdaptor<Object> {
 
     @Override
-    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception{
+    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal,  Type type, Object o) throws Exception{
         return new IntegerArrayBinaryTag((int[]) o);
     }
 

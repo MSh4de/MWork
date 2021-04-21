@@ -12,8 +12,4 @@ public class ShadeListBinaryTagAdaptor extends ListBinaryTagAdaptor {
         return ((ListBinaryTag) super.serialize(binaryTagMarshal, type, o)).toShade();
     }
 
-    @Override
-    public Object deserialize(BinaryTagMarshal binaryTagMarshal, Type type, BinaryTag<?> binaryTag) throws Exception {
-        return super.deserialize(binaryTagMarshal, type, binaryTag);
-    }
 }
