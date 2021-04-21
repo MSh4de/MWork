@@ -14,15 +14,13 @@ public interface BinaryTagMarshal {
 
     void registerAdaptor(Class<?> aClass, BinaryTagAdaptor<?> binaryTagAdaptor);
 
-    BinaryTagType getBinaryTagTypeByClass(Class<?> aClass);
-
-    BinaryTagAdaptor<Object> getBinaryTagAdaptor(Class<?> aClass);
+    BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Class<?> aClass) throws Exception;
 
     BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Field field) throws Exception;
 
     String getNameOf(Field field);
 
-    BinaryTagType getBinaryTagTypOf(Field field);
+    BinaryTagType getBinaryTagTypOf(Class<?> aClass);
 
     Unsafe getUnsafe();
 }
