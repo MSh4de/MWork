@@ -8,8 +8,7 @@
     <artifactId>mwork</artifactId>
     <version>0.0.1</version>
     <name>MWork</name>
-
-
+    
     <build>
         <plugins>
             <plugin>
