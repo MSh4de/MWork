@@ -7,10 +7,7 @@ import eu.mshade.mwork.binarytag.marshal.primitive.*;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
 
@@ -50,40 +47,47 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         CLASS_BINARY_TAG_TYPE.put(List.class, BinaryTagType.LIST);
 
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BYTE.getClazz(), new ByteBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.STRING.getClazz(), new StringBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHORT.getClazz(), new ShortBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.INTEGER.getClazz(), new IntegerBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LONG.getClazz(), new LongBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.FLOAT.getClazz(), new FloatBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BYTE_ARRAY.getClazz(), new ByteArrayBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.DOUBLE.getClazz(), new DoubleBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BYTE_ARRAY.getClazz(), new ByteArrayBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.STRING.getClazz(), new StringBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LIST.getClazz(), new ListBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.COMPOUND.getClazz(), new CompoundBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.INTEGER_ARRAY.getClazz(), new IntegerArrayBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LONG_ARRAY.getClazz(), new LongArrayBinaryTagAdaptor());
+
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BOOLEAN.getClazz(), new BooleanBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.COMPOUND.getClazz(), new CompoundBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LIST.getClazz(), new ListBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_COMPOUND.getClazz(), new ZstdCompoundBinaryTagAdaptor());
+
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_BYTE_ARRAY.getClazz(), new ShadeByteArrayBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_LIST.getClazz(), new ShadeListBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_COMPOUND.getClazz(), new ShadeCompoundBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_INTEGER_ARRAY.getClazz(), new ShadeIntegerArrayBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_LONG_ARRAY.getClazz(), new ShadeLongArrayBinaryTagAdaptor());
+
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_BYTE_ARRAY.getClazz(), new ZstdByteArrayBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LIST.getClazz(), new ZstdListBinaryTagAdaptor());
+        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_COMPOUND.getClazz(), new ZstdCompoundBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_INTEGER_ARRAY.getClazz(), new ZstdIntegerArrayBinaryTagAdaptor());
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LONG_ARRAY.getClazz(), new ZstdLongArrayBinaryTagAdaptor());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LIST.getClazz(), new ZstdListBinaryTagAdaptor());
     }
 
     @Override
     public CompoundBinaryTag marshal(Object o) {
         try {
-           return (CompoundBinaryTag) ((BinaryTagAdaptor)getBinaryTagAdaptor(o.getClass())).serialize(this, o.getClass(), o);
+           return (CompoundBinaryTag) ((BinaryTagAdaptor)getBinaryTagAdaptorOf(o.getClass())).serialize(this, o.getClass(), o);
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException();
         }
     }
 
-
     @Override
     public <T> T unMarshal(Class<T> aClass, CompoundBinaryTag compoundBinaryTag) {
         try {
-            return (T) getBinaryTagAdaptor(aClass).deserialize(this, aClass, compoundBinaryTag);
+            return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, compoundBinaryTag);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -94,13 +98,8 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         BINARY_TAG_ADAPTOR_MAP.putIfAbsent(aClass, (BinaryTagAdaptor<Object>) binaryTagAdaptor);
     }
 
-    @Override
-    public BinaryTagType getBinaryTagTypeByClass(Class<?> aClass) {
-        return CLASS_BINARY_TAG_TYPE.getOrDefault(aClass, BinaryTagType.COMPOUND);
-    }
 
-    @Override
-    public BinaryTagAdaptor<Object> getBinaryTagAdaptor(Class<?> aClass) {
+    private BinaryTagAdaptor<Object> getBinaryTagAdaptorByClass(Class<?> aClass) {
         if (CLASS_BINARY_TAG_TYPE.containsKey(aClass)) {
             return BINARY_TAG_ADAPTOR_MAP.get(CLASS_BINARY_TAG_TYPE.get(aClass).getClazz());
         }else if (BINARY_TAG_ADAPTOR_MAP.containsKey(aClass)){
@@ -110,11 +109,25 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
+    public BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Class<?> aClass) throws Exception {
+        BinaryTagProperty binaryTagProperty = aClass.getDeclaredAnnotation(BinaryTagProperty.class);
+        if (binaryTagProperty != null){
+            return this.getBinaryTagAdaptorByClass(binaryTagProperty.value().getClazz());
+        }
+        return this.getBinaryTagAdaptorByClass(aClass);
+    }
+
+    @Override
     public BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Field field) throws Exception {
         if (field.getDeclaredAnnotation(BinaryTagAdapt.class) != null) {
             return (BinaryTagAdaptor) this.getUnsafe().allocateInstance(field.getDeclaredAnnotation(BinaryTagAdapt.class).value());
         }
-        return this.getBinaryTagAdaptor(getBinaryTagTypOf(field).getClazz());
+        BinaryTagProperty binaryTagProperty = field.getDeclaredAnnotation(BinaryTagProperty.class);
+        if (binaryTagProperty != null){
+            return this.getBinaryTagAdaptorByClass(binaryTagProperty.value().getClazz());
+        }
+
+        return this.getBinaryTagAdaptorByClass(field.getType());
     }
 
     @Override
@@ -123,8 +136,8 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public BinaryTagType getBinaryTagTypOf(Field field) {
-        return (field.getDeclaredAnnotation(BinaryTagProperty.class) != null? field.getDeclaredAnnotation(BinaryTagProperty.class).value(): this.getBinaryTagTypeByClass(field.getType()));
+    public BinaryTagType getBinaryTagTypOf(Class<?> aClass) {
+        return (aClass.getDeclaredAnnotation(BinaryTagProperty.class) != null? aClass.getDeclaredAnnotation(BinaryTagProperty.class).value(): CLASS_BINARY_TAG_TYPE.getOrDefault(aClass, BinaryTagType.COMPOUND));
     }
 
     @Override
