@@ -18,6 +18,6 @@ public class EndBinaryTagBuffer implements BinaryTagBuffer {
     @Override
     public EndBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
         inputStream.readByte();
-        return new EndBinaryTag();
+        return EndBinaryTag.TAG;
     }
 }
