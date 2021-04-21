@@ -7,6 +7,7 @@ import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<Iterable<BinaryTag<?>>>, ZstdBinaryTag<ZstdListBinaryTag>, ShadeBinaryTag<ShadeListBinaryTag> {
 
@@ -20,7 +21,6 @@ public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<
         super(binaryTagList);
         this.elementType = elementType;
     }
-
 
     @Override
     public BinaryTagType getType() {
@@ -44,5 +44,19 @@ public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<
     @Override
     public ShadeListBinaryTag toShade() {
         return new ShadeListBinaryTag(this, elementType);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ListBinaryTag that = (ListBinaryTag) o;
+        return elementType == that.elementType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), elementType);
     }
 }

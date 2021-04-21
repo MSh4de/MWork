@@ -3,6 +3,7 @@ package eu.mshade.mwork.binarytag.entity;
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShadeCompoundBinaryTag extends CompoundBinaryTag {
@@ -12,6 +13,7 @@ public class ShadeCompoundBinaryTag extends CompoundBinaryTag {
     }
 
     public ShadeCompoundBinaryTag() {
+        super(new LinkedHashMap<>());
     }
 
     @Override
