@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface BinaryTagAdapt {
+public @interface BinaryTagTypeAdaptor {
 
     Class<? extends BinaryTagAdaptor<?>> value();
 
