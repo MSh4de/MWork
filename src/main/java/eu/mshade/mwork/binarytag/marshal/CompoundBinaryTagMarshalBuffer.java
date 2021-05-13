@@ -6,7 +6,7 @@ import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
-public class CompoundBinaryTagAdaptor implements BinaryTagAdaptor<Object>{
+public class CompoundBinaryTagMarshalBuffer implements BinaryTagMarshalBuffer<Object> {
 
     @Override
     public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {

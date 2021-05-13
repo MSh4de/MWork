@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListBinaryTagAdaptor implements BinaryTagAdaptor<Object> {
+public class ListBinaryTagMarshalBuffer implements BinaryTagMarshalBuffer<Object> {
 
     @Override
     public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {
@@ -18,9 +18,9 @@ public class ListBinaryTagAdaptor implements BinaryTagAdaptor<Object> {
         Class<?> model = (Class<?>) typeArgument;
         BinaryTagType binaryTagType = binaryTagMarshal.getBinaryTagTypOf(model);
         ListBinaryTag listBinaryTag =  new ListBinaryTag(binaryTagType);
-        BinaryTagAdaptor<Object> binaryTagAdaptor = binaryTagMarshal.getBinaryTagAdaptorOf(model);
+        BinaryTagMarshalBuffer<Object> binaryTagMarshalBuffer = binaryTagMarshal.getBinaryTagAdaptorOf(model);
         for (Object object : objects) {
-            listBinaryTag.add(binaryTagAdaptor.serialize(binaryTagMarshal, typeArgument, object));
+            listBinaryTag.add(binaryTagMarshalBuffer.serialize(binaryTagMarshal, typeArgument, object));
         }
         return listBinaryTag;
     }
@@ -30,9 +30,9 @@ public class ListBinaryTagAdaptor implements BinaryTagAdaptor<Object> {
         List<Object> objects = new ArrayList<>();
         Class<?> model = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
         ListBinaryTag listBinaryTag = (ListBinaryTag) binaryTag;
-        BinaryTagAdaptor<Object> binaryTagAdaptor = binaryTagMarshal.getBinaryTagAdaptorOf(listBinaryTag.getElementType().getClazz());
+        BinaryTagMarshalBuffer<Object> binaryTagMarshalBuffer = binaryTagMarshal.getBinaryTagAdaptorOf(listBinaryTag.getElementType().getClazz());
         for (BinaryTag<?> tag : listBinaryTag) {
-            objects.add(binaryTagAdaptor.deserialize(binaryTagMarshal, model, tag));
+            objects.add(binaryTagMarshalBuffer.deserialize(binaryTagMarshal, model, tag));
         }
         return objects;
     }

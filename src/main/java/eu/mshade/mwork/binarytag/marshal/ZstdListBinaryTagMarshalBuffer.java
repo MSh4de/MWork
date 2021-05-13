@@ -5,7 +5,7 @@ import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
 
 import java.lang.reflect.Type;
 
-public class ZstdListBinaryTagAdaptor extends ListBinaryTagAdaptor {
+public class ZstdListBinaryTagMarshalBuffer extends ListBinaryTagMarshalBuffer {
 
     @Override
     public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {

@@ -4,7 +4,7 @@ import eu.mshade.mwork.binarytag.BinaryTag;
 
 import java.lang.reflect.Type;
 
-public interface BinaryTagAdaptor<T> {
+public interface BinaryTagMarshalBuffer<T> {
 
     BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, T t) throws Exception;
 

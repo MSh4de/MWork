@@ -6,7 +6,7 @@ import eu.mshade.mwork.binarytag.marshal.BinaryTagMarshal;
 
 import java.lang.reflect.Type;
 
-public class ZstdLongArrayBinaryTagAdaptor extends LongArrayBinaryTagAdaptor{
+public class ZstdLongArrayBinaryTagMarshalBuffer extends LongArrayBinaryTagMarshalBuffer {
 
     @Override
     public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {

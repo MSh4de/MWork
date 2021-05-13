@@ -12,11 +12,11 @@ public interface BinaryTagMarshal {
 
     <T> T unMarshal(Class<T> aClass, CompoundBinaryTag compoundBinaryTag);
 
-    void registerAdaptor(Class<?> aClass, BinaryTagAdaptor<?> binaryTagAdaptor);
+    void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
-    BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Class<?> aClass) throws Exception;
+    BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorOf(Class<?> aClass) throws Exception;
 
-    BinaryTagAdaptor<Object> getBinaryTagAdaptorOf(Field field) throws Exception;
+    BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorOf(Field field) throws Exception;
 
     String getNameOf(Field field);
 
