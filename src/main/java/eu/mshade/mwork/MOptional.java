@@ -38,7 +38,7 @@ public class MOptional<T> {
         return value != null;
     }
 
-    public MOptional<T> ifPresent(MConsumer<? super T> consumer) throws Exception {
+    public MOptional<T> ifPresent(MConsumer<? super T> consumer) {
         if (value != null){
             try {
                 consumer.accept(value);
@@ -48,7 +48,7 @@ public class MOptional<T> {
         }
         return this;
     }
-    public <S> S ifPresent(MFunction<T, S> consumer, S other) throws Exception{
+    public <S> S ifPresent(MFunction<T, S> consumer, S other) {
         if (value != null) {
             try {
                 return consumer.apply(value);
@@ -63,7 +63,7 @@ public class MOptional<T> {
         return value != null ? value : other;
     }
 
-    public MOptional<T> ifNotPresent(MConsumer<Void> consumer) throws Exception {
+    public MOptional<T> ifNotPresent(MConsumer<Void> consumer)  {
         if (value == null){
             try {
                 consumer.accept(null);
