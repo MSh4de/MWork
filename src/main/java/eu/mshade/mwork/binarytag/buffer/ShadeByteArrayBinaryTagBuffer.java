@@ -13,21 +13,11 @@ public class ShadeByteArrayBinaryTagBuffer extends ByteArrayBinaryTagBuffer {
 
     @Override
     public void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-        super.write(binaryTagBufferDriver, dataOutputStream, binaryTag);
-        outputStream.writeInt(byteArrayOutputStream.size());
-        outputStream.write(byteArrayOutputStream.toByteArray());
-        dataOutputStream.close();
+        super.writeShade(binaryTagBufferDriver, outputStream, binaryTag);
     }
 
     @Override
     public ByteArrayBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
-        int size = inputStream.readInt();
-        byte[] payload = new byte[size];
-        inputStream.readFully(payload);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(payload);
-        DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
-        return super.read(binaryTagBufferDriver, dataInputStream).toShade();
+        return (ByteArrayBinaryTag) super.readShade(binaryTagBufferDriver, inputStream);
     }
 }
