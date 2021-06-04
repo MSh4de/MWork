@@ -2,13 +2,13 @@ package eu.mshade.mwork;
 
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.entity.StringBinaryTag;
-import eu.mshade.mwork.binarytag.marshal.BinaryTagAdaptor;
+import eu.mshade.mwork.binarytag.marshal.BinaryTagMarshalBuffer;
 import eu.mshade.mwork.binarytag.marshal.BinaryTagMarshal;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
 
-public class UUIDBinaryTagAdaptor implements BinaryTagAdaptor<UUID> {
+public class UUIDBinaryTagMarshalBuffer implements BinaryTagMarshalBuffer<UUID> {
 
     @Override
     public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, UUID uuid) throws Exception {
