@@ -1,7 +1,6 @@
 package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
-import eu.mshade.mwork.binarytag.wrap.BinaryTagWrap;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,11 +17,4 @@ public interface BinaryTagBufferDriver {
     CompoundBinaryTag readCompoundBinaryTag(File file);
 
     CompoundBinaryTag readCompoundBinaryTag(InputStream inputStream);
-
-    CompoundBinaryTag wrapToMinecraft(CompoundBinaryTag compoundBinaryTag);
-
-    BinaryTagWrap<BinaryTag<?>> getBinaryTagWrap(BinaryTagType binaryTagType);
-
-    BinaryTagType getBinaryTagTypeWrap(BinaryTagType binaryTagType);
-
 }
