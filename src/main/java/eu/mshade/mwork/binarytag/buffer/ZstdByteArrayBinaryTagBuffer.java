@@ -15,11 +15,11 @@ public class ZstdByteArrayBinaryTagBuffer extends ByteArrayBinaryTagBuffer {
 
     @Override
     public void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
-        super.writeZstd(binaryTagBufferDriver, outputStream, binaryTag);
+        super.writeZstd(outputStream, dataOutputStream -> super.write(binaryTagBufferDriver, dataOutputStream, binaryTag));
     }
 
     @Override
     public ByteArrayBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
-        return (ByteArrayBinaryTag) super.readZstd(binaryTagBufferDriver, inputStream);
+        return (ByteArrayBinaryTag) super.readZstd(inputStream, dataInputStream -> super.read(binaryTagBufferDriver, dataInputStream));
     }
 }

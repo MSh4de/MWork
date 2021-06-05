@@ -14,11 +14,11 @@ public class ShadeIntegerArrayBinaryTagBuffer extends IntegerArrayBinaryTagBuffe
 
     @Override
     public void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
-        super.writeShade(binaryTagBufferDriver, outputStream, binaryTag);
+        super.writeShade(outputStream, dataOutputStream -> super.write(binaryTagBufferDriver, dataOutputStream, binaryTag));
     }
 
     @Override
     public IntegerArrayBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
-        return (IntegerArrayBinaryTag) super.readShade(binaryTagBufferDriver, inputStream);
+        return (IntegerArrayBinaryTag) super.readShade(inputStream, dataInputStream -> super.read(binaryTagBufferDriver, dataInputStream));
     }
 }

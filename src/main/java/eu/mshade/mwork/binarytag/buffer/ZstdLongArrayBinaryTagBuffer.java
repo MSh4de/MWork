@@ -15,11 +15,11 @@ import java.io.DataOutputStream;
 public class ZstdLongArrayBinaryTagBuffer extends LongArrayBinaryTagBuffer {
     @Override
     public void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception {
-        super.writeZstd(binaryTagBufferDriver, outputStream, binaryTag);
+        super.writeZstd(outputStream, dataOutputStream -> super.write(binaryTagBufferDriver, dataOutputStream, binaryTag));
     }
 
     @Override
     public LongArrayBinaryTag read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception {
-        return (LongArrayBinaryTag) super.readZstd(binaryTagBufferDriver, inputStream);
+        return (LongArrayBinaryTag) super.readZstd(inputStream, dataInputStream -> super.read(binaryTagBufferDriver, dataInputStream));
     }
 }

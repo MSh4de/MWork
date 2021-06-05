@@ -46,6 +46,8 @@ public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<
         return new ShadeListBinaryTag(this, elementType);
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

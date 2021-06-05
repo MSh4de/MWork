@@ -12,4 +12,6 @@ public class ShadeByteArrayBinaryTag extends ByteArrayBinaryTag {
     public BinaryTagType getType() {
         return BinaryTagType.SHADE_BYTE_ARRAY;
     }
+
+
 }
