@@ -87,7 +87,7 @@ public class DefaultBinaryTagBufferDriver implements BinaryTagBufferDriver {
     public CompoundBinaryTag readCompoundBinaryTag(InputStream inputStream) {
         try(DataInputStream dataInputStream = new DataInputStream(inputStream)) {
             BinaryTagType type = BinaryTagType.getTagTypeById(dataInputStream.readByte());
-            if (type != null) {
+            if (type != null && type != BinaryTagType.END) {
                 short length = dataInputStream.readShort();
                 byte[] bytes = new byte[length];
                 dataInputStream.readFully(bytes);
