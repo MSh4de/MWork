@@ -3,7 +3,7 @@ stages:
 
 deploy:
   stage: deploy
-  image: maven:3.5.2-jdk-8
+  image: maven:3.8.1-jdk-11
   only:
     - master
   script:
