@@ -9,6 +9,8 @@ import eu.mshade.mwork.binarytag.DefaultBinaryTagBufferDriver;
 import eu.mshade.mwork.binarytag.DefaultBinaryTagMarshal;
 import eu.mshade.mwork.binarytag.marshal.BinaryTagMarshal;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -18,6 +20,7 @@ public final class MWork {
 
     private static MWork mWork;
     private static Unsafe UNSAFE;
+    private static Logger LOGGER = LoggerFactory.getLogger(MWork.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BinaryTagBufferDriver binaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
     private final BinaryTagMarshal binaryTagMarshal = new DefaultBinaryTagMarshal();
@@ -29,7 +32,7 @@ public final class MWork {
             field.setAccessible(true);
             UNSAFE = (Unsafe) field.get(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
 
         mWork = this;
@@ -41,8 +44,6 @@ public final class MWork {
         this.objectMapper.registerModule(simpleModule);
         this.objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.objectMapper.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
-        //this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
     }
 
     public BinaryTagBufferDriver getBinaryTagBufferDriver() {
@@ -59,24 +60,6 @@ public final class MWork {
 
     public static MWork get(){
         return (mWork != null ? mWork : new MWork());
-    }
-
-    public String serialize(Object object){
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage(), e.getCause());
-        }
-
-    }
-
-    public <T> T deserialize(String s, Class<T> aClass){
-            try {
-                return objectMapper.readValue(s, aClass);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e.getMessage(), e.getCause());
-            }
     }
 
     public Unsafe getUnsafe() {
