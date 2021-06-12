@@ -1,11 +1,7 @@
 package eu.mshade.test;
 
-import eu.mshade.mwork.binarytag.BinaryTagType;
-import eu.mshade.mwork.binarytag.marshal.BinaryTagProperty;
-
 import java.util.UUID;
 
-@BinaryTagProperty(BinaryTagType.SHADE_COMPOUND)
 public class Location {
 
     private int x, y, z;

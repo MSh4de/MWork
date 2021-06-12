@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AccountContext {
+public class AccountContext implements Account {
 
     private String name;
     private int age;
@@ -34,6 +34,15 @@ public class AccountContext {
     }
 
 
+    @Override
+    public String toString() {
+        return "AccountContext{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", time=" + time +
+                ", locations=" + locations +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
