@@ -3,6 +3,7 @@ package eu.mshade.test;
 import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.DefaultBinaryTagBufferDriver;
 import eu.mshade.mwork.binarytag.DefaultBinaryTagMarshal;
+import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
 import eu.mshade.mwork.binarytag.entity.StringBinaryTag;
 
@@ -101,6 +102,7 @@ public class Test  {
         DefaultBinaryTagBufferDriver defaultBinaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
         DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
         defaultBinaryTagMarshal.registerAdaptor(UUID.class, new UUIDMarshalBuffer());
+        
 
 
         defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));

@@ -81,7 +81,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public <T> T unMarshal(Class<T> aClass, CompoundBinaryTag compoundBinaryTag) {
+    public <T> T unMarshal(CompoundBinaryTag compoundBinaryTag, Class<T> aClass) {
         try {
             return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, compoundBinaryTag);
         } catch (Exception e) {

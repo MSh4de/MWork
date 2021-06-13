@@ -10,7 +10,7 @@ public interface BinaryTagMarshal {
 
     CompoundBinaryTag marshal(Object o);
 
-    <T> T unMarshal(Class<T> aClass, CompoundBinaryTag compoundBinaryTag);
+    <T> T unMarshal(CompoundBinaryTag compoundBinaryTag, Class<T> aClass);
 
     void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 

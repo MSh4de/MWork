@@ -12,9 +12,11 @@ public class EventTest {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, eventContainer) -> {
+        eventBus.subscribe(Event.class, (event, eventContainer) ->  {
+            String container = eventContainer.getContainer(String.class);
             System.out.println(event.getClass());
-        }).withEventFilter(EventFilter.DERIVE)
+        })
+                .withEventFilter(EventFilter.DERIVE)
                 .withEventPriority(EventPriority.HIGH);
 
         eventBus.subscribe(HelloWorldEvent.class, (event, eventContainer) -> System.out.println("HelloWorldEvent"))
