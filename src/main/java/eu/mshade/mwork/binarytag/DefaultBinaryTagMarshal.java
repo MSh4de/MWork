@@ -101,7 +101,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         } else if (BINARY_TAG_ADAPTOR_MAP.containsKey(aClass)) {
             return BINARY_TAG_ADAPTOR_MAP.get(aClass);
         }
-        return BINARY_TAG_ADAPTOR_MAP.get(eu.mshade.mwork.binarytag.BinaryTagType.COMPOUND.getClazz());
+        return BINARY_TAG_ADAPTOR_MAP.get(BinaryTagType.COMPOUND.getClazz());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
 
     @Override
     public BinaryTagType getBinaryTagTypOf(Class<?> aClass) {
-        return (aClass.getDeclaredAnnotation(BinaryTagProperty.class) != null ? aClass.getDeclaredAnnotation(BinaryTagProperty.class).value() : CLASS_BINARY_TAG_TYPE.getOrDefault(aClass, eu.mshade.mwork.binarytag.BinaryTagType.COMPOUND));
+        return (aClass.getDeclaredAnnotation(BinaryTagProperty.class) != null ? aClass.getDeclaredAnnotation(BinaryTagProperty.class).value() : CLASS_BINARY_TAG_TYPE.getOrDefault(aClass, BinaryTagType.COMPOUND));
     }
 
     @Override

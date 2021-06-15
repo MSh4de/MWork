@@ -26,7 +26,7 @@ public interface BinaryTagBuffer {
         dataOutputStream.close();
     }
     
-    default BinaryTag<?> readShade( DataInputStream inputStream, MFunction<DataInputStream, BinaryTag<?>> consumer) throws Exception {
+    default BinaryTag<?> readShade(DataInputStream inputStream, MFunction<DataInputStream, BinaryTag<?>> consumer) throws Exception {
         int size = inputStream.readInt();
         byte[] payload = new byte[size];
         inputStream.readFully(payload);
