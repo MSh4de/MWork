@@ -1,6 +1,7 @@
 package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.MWork;
+import eu.mshade.mwork.ParameterContainer;
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.marshal.*;
 import eu.mshade.mwork.binarytag.marshal.array.*;
@@ -73,7 +74,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     @Override
     public CompoundBinaryTag marshal(Object o) {
         try {
-            return (CompoundBinaryTag) ((BinaryTagMarshalBuffer) getBinaryTagAdaptorOf(o.getClass())).serialize(this, o.getClass(), o);
+            return marshal(o, ParameterContainer.EMPTY);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
@@ -81,9 +82,28 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public <T> T unMarshal(CompoundBinaryTag compoundBinaryTag, Class<T> aClass) {
+    public CompoundBinaryTag marshal(Object o, ParameterContainer container) {
         try {
-            return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, compoundBinaryTag);
+            return (CompoundBinaryTag) ((BinaryTagMarshalBuffer) getBinaryTagAdaptorOf(o.getClass())).serialize(this, o.getClass(), o, container);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass) {
+        try {
+            return unMarshal(binaryTag, aClass, ParameterContainer.EMPTY);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass, ParameterContainer container) {
+        try {
+            return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, binaryTag, container);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

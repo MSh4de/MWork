@@ -1,5 +1,6 @@
 package eu.mshade.mwork.binarytag.marshal;
 
+import eu.mshade.mwork.ParameterContainer;
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 
@@ -9,25 +10,25 @@ import java.lang.reflect.Type;
 public class CompoundBinaryTagMarshalBuffer implements BinaryTagMarshalBuffer<Object> {
 
     @Override
-    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o) throws Exception {
+    public BinaryTag<?> serialize(BinaryTagMarshal binaryTagMarshal, Type type, Object o, ParameterContainer parameterContainer) throws Exception {
         CompoundBinaryTag compoundTag = new CompoundBinaryTag();
         for (Field field : o.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             String name = binaryTagMarshal.getNameOf(field);
-            compoundTag.putBinaryTag(name, binaryTagMarshal.getBinaryTagAdaptorOf(field).serialize(binaryTagMarshal, field.getGenericType(), field.get(o)));
+            compoundTag.putBinaryTag(name, binaryTagMarshal.getBinaryTagAdaptorOf(field).serialize(binaryTagMarshal, field.getGenericType(), field.get(o), parameterContainer));
         }
         return compoundTag;
     }
 
     @Override
-    public Object deserialize(BinaryTagMarshal binaryTagMarshal, Type type, BinaryTag<?> binaryTag) throws Exception {
+    public Object deserialize(BinaryTagMarshal binaryTagMarshal, Type type, BinaryTag<?> binaryTag, ParameterContainer parameterContainer) throws Exception {
         CompoundBinaryTag compoundBinaryTag = (CompoundBinaryTag) binaryTag;
         Class<?> aClass = (Class<?>) type;
         Object o = binaryTagMarshal.getUnsafe().allocateInstance(aClass);
         for (Field field : aClass.getDeclaredFields()) {
             field.setAccessible(true);
             String name = binaryTagMarshal.getNameOf(field);
-            field.set(o, binaryTagMarshal.getBinaryTagAdaptorOf(field).deserialize(binaryTagMarshal, field.getGenericType(), compoundBinaryTag.getBinaryTag(name)));
+            field.set(o, binaryTagMarshal.getBinaryTagAdaptorOf(field).deserialize(binaryTagMarshal, field.getGenericType(), compoundBinaryTag.getBinaryTag(name), parameterContainer));
         }
         return o;
     }

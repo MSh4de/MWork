@@ -1,7 +1,5 @@
 package eu.mshade.mwork;
 
-import eu.mshade.mwork.event.EventContainer;
-
 import java.util.HashMap;
 import java.util.Map;
 
