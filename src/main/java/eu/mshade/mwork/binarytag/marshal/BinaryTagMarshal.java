@@ -7,6 +7,7 @@ import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public interface BinaryTagMarshal {
 
@@ -17,6 +18,8 @@ public interface BinaryTagMarshal {
     <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass);
 
     <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass, ParameterContainer parameterContainer);
+
+    void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
     void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
