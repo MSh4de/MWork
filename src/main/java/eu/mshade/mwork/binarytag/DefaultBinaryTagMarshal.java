@@ -73,18 +73,14 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
 
     @Override
     public CompoundBinaryTag marshal(Object o) {
-        try {
-            return marshal(o, ParameterContainer.EMPTY);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+        return marshal(o, ParameterContainer.EMPTY);
     }
 
     @Override
     public CompoundBinaryTag marshal(Object o, ParameterContainer container) {
         try {
-            return (CompoundBinaryTag) ((BinaryTagMarshalBuffer) getBinaryTagAdaptorOf(o.getClass())).serialize(this, o.getClass(), o, container);
+            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(o.getClass());
+            return (CompoundBinaryTag) binaryTagMarshalBuffer.serialize(this, o.getClass(), o, container);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
@@ -110,10 +106,14 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
+    public void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
+        aClass.forEach(clazz -> this.registerAdaptor(clazz, binaryTagMarshalBuffer));
+    }
+
+    @Override
     public void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
         BINARY_TAG_ADAPTOR_MAP.putIfAbsent(aClass, (BinaryTagMarshalBuffer<Object>) binaryTagMarshalBuffer);
     }
-
 
     private BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorByClass(Class<?> aClass) {
         if (CLASS_BINARY_TAG_TYPE.containsKey(aClass)) {
