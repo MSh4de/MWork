@@ -2,7 +2,6 @@ package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.MWork;
 import eu.mshade.mwork.ParameterContainer;
-import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.marshal.*;
 import eu.mshade.mwork.binarytag.marshal.array.*;
 import eu.mshade.mwork.binarytag.marshal.primitive.*;
@@ -72,15 +71,15 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public CompoundBinaryTag marshal(Object o) {
+    public BinaryTag<?> marshal(Object o) {
         return marshal(o, ParameterContainer.EMPTY);
     }
 
     @Override
-    public CompoundBinaryTag marshal(Object o, ParameterContainer container) {
+    public BinaryTag<?> marshal(Object o, ParameterContainer container) {
         try {
             BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(o.getClass());
-            return (CompoundBinaryTag) binaryTagMarshalBuffer.serialize(this, o.getClass(), o, container);
+            return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, container);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();

@@ -105,7 +105,7 @@ public class Test  {
         
 
 
-        defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
+        defaultBinaryTagBufferDriver.writeCompoundBinaryTag((CompoundBinaryTag) defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
 
         /*
         JoinGame joinGame = new JoinGame(3, false, (byte)1, (byte) 1, 1,  new String[]{"minecraft:owverworld"}, "minecraft:world", 58024156541321L, 20, 12, false, true, false, false);
