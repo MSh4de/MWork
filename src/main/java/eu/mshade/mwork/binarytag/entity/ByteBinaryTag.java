@@ -20,7 +20,7 @@ public class ByteBinaryTag implements BinaryTag<Byte> {
 
     @Override
     public Byte getValue() {
-        return null;
+        return aByte;
     }
 
     @Override
