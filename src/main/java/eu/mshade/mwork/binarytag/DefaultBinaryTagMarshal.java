@@ -70,16 +70,27 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LONG_ARRAY.getClazz(), new ZstdLongArrayBinaryTagMarshalBuffer());
     }
 
+
     @Override
     public BinaryTag<?> marshal(Object o) {
         return marshal(o, ParameterContainer.EMPTY);
     }
 
     @Override
+    public BinaryTag<?> marshal(Object o, Class<?> aClass) {
+        return marshal(o, aClass, ParameterContainer.EMPTY);
+    }
+
+    @Override
     public BinaryTag<?> marshal(Object o, ParameterContainer container) {
+        return marshal(o, o.getClass(), container);
+    }
+
+    @Override
+    public BinaryTag<?> marshal(Object o, Class<?> aClass, ParameterContainer parameterContainer) {
         try {
-            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(o.getClass());
-            return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, container);
+            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(aClass);
+            return binaryTagMarshalBuffer.serialize(this, aClass, o, parameterContainer);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();

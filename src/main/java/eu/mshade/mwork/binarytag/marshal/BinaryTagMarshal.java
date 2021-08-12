@@ -13,7 +13,11 @@ public interface BinaryTagMarshal {
 
     BinaryTag<?> marshal(Object o);
 
+    BinaryTag<?> marshal(Object o, Class<?> aClass);
+
     BinaryTag<?> marshal(Object o, ParameterContainer parameterContainer);
+
+    BinaryTag<?> marshal(Object o, Class<?> aClass, ParameterContainer parameterContainer);
 
     <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass);
 
