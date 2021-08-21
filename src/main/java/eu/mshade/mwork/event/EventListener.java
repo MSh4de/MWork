@@ -1,5 +1,7 @@
 package eu.mshade.mwork.event;
 
+import eu.mshade.mwork.ParameterContainer;
+
 @FunctionalInterface
 public interface EventListener<E> {
 

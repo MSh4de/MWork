@@ -1,5 +1,7 @@
 package eu.mshade.mwork.event;
 
+import eu.mshade.mwork.ParameterContainer;
+
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
