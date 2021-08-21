@@ -1,6 +1,7 @@
 package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.MWork;
+import eu.mshade.mwork.ParameterContainer;
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.marshal.*;
 import eu.mshade.mwork.binarytag.marshal.array.*;
@@ -71,9 +72,25 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public CompoundBinaryTag marshal(Object o) {
+    public BinaryTag<?> marshal(Object o) {
+        return marshal(o, ParameterContainer.EMPTY);
+    }
+
+    @Override
+    public BinaryTag<?> marshal(Object o, Class<?> aClass) {
+        return marshal(o, aClass, ParameterContainer.EMPTY);
+    }
+
+    @Override
+    public BinaryTag<?> marshal(Object o, ParameterContainer container) {
+        return marshal(o, o.getClass(), container);
+    }
+
+    @Override
+    public BinaryTag<?> marshal(Object o, Class<?> aClass, ParameterContainer parameterContainer) {
         try {
-            return (CompoundBinaryTag) ((BinaryTagMarshalBuffer) getBinaryTagAdaptorOf(o.getClass())).serialize(this, o.getClass(), o);
+            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(o.getClass());
+            return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, parameterContainer);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
@@ -81,19 +98,32 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public <T> T unMarshal(CompoundBinaryTag compoundBinaryTag, Class<T> aClass) {
+    public <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass) {
         try {
-            return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, compoundBinaryTag);
+            return unMarshal(binaryTag, aClass, ParameterContainer.EMPTY);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
+    public <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass, ParameterContainer container) {
+        try {
+            return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, binaryTag, container);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
+        aClass.forEach(clazz -> this.registerAdaptor(clazz, binaryTagMarshalBuffer));
+    }
+
+    @Override
     public void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
         BINARY_TAG_ADAPTOR_MAP.putIfAbsent(aClass, (BinaryTagMarshalBuffer<Object>) binaryTagMarshalBuffer);
     }
-
 
     private BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorByClass(Class<?> aClass) {
         if (CLASS_BINARY_TAG_TYPE.containsKey(aClass)) {

@@ -1,16 +1,29 @@
 package eu.mshade.mwork.binarytag.marshal;
 
+import eu.mshade.mwork.ParameterContainer;
+import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public interface BinaryTagMarshal {
 
-    CompoundBinaryTag marshal(Object o);
+    BinaryTag<?> marshal(Object o);
 
-    <T> T unMarshal(CompoundBinaryTag compoundBinaryTag, Class<T> aClass);
+    BinaryTag<?> marshal(Object o, Class<?> aClass);
+
+    BinaryTag<?> marshal(Object o, ParameterContainer parameterContainer);
+
+    BinaryTag<?> marshal(Object o, Class<?> aClass, ParameterContainer parameterContainer);
+
+    <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass);
+
+    <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass, ParameterContainer parameterContainer);
+
+    void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
     void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
