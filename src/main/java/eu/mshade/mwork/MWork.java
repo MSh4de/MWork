@@ -1,5 +1,6 @@
 package eu.mshade.mwork;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ public final class MWork {
         this.binaryTagMarshal.registerAdaptor(UUID.class, new UUIDBinaryTagMarshalBuffer());
 
         SimpleModule simpleModule = new SimpleModule();
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         simpleModule.addSerializer(JSONObject.class, new JSONObjectSerializer());
         simpleModule.addDeserializer(JSONObject.class, new JSONObjectDeserializer());
         this.objectMapper.registerModule(simpleModule);

@@ -89,7 +89,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     @Override
     public BinaryTag<?> marshal(Object o, Class<?> aClass, ParameterContainer parameterContainer) {
         try {
-            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(o.getClass());
+            BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(aClass);
             return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, parameterContainer);
         } catch (Exception e) {
             e.printStackTrace();

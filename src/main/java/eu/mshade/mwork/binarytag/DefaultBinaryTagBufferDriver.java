@@ -22,8 +22,9 @@ public class DefaultBinaryTagBufferDriver implements BinaryTagBufferDriver {
         binaryTagBufferMap.put(BinaryTagType.LONG, new LongBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.FLOAT, new FloatBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.DOUBLE, new DoubleBinaryTagBuffer());
-        binaryTagBufferMap.put(BinaryTagType.BYTE_ARRAY, new ByteArrayBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.STRING, new StringBinaryTagBuffer());
+
+        binaryTagBufferMap.put(BinaryTagType.BYTE_ARRAY, new ByteArrayBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.LIST, new ListBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.COMPOUND, new CompoundBinaryTagBuffer());
         binaryTagBufferMap.put(BinaryTagType.INTEGER_ARRAY, new IntegerArrayBinaryTagBuffer());
