@@ -120,6 +120,9 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
 
     public float getFloat(String key) { return (float) this.getBinaryTag(key).getValue(); }
 
+    public boolean containsKey(String key){
+        return this.binaryTagMap.containsKey(key);
+    }
 
     @Override
     public Map<String, BinaryTag<?>> getValue() {
