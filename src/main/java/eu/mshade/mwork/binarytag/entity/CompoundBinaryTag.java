@@ -124,6 +124,10 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
         return this.binaryTagMap.containsKey(key);
     }
 
+    public boolean isEmpty() {
+        return this.binaryTagMap.isEmpty();
+    }
+
     @Override
     public Map<String, BinaryTag<?>> getValue() {
         return binaryTagMap;
