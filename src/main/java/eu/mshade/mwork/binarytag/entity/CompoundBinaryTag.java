@@ -8,6 +8,7 @@ import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag>, ShadeBinaryTag<ShadeCompoundBinaryTag> {
 
@@ -126,6 +127,10 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
 
     public boolean isEmpty() {
         return this.binaryTagMap.isEmpty();
+    }
+
+    public <T extends BinaryTag<?>> T computeIfAbsent(String key, Function<? super String, ? extends T> mappingFunction) {
+        return (T) this.binaryTagMap.computeIfAbsent(key, mappingFunction);
     }
 
     @Override
