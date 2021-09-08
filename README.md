@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, eventContainer) ->  System.out.println(event.getClass()))
+        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
                 .withEventFilter(EventFilter.DERIVE)
                 .withEventPriority(EventPriority.HIGH);
     }
@@ -30,18 +30,18 @@ public class Main {
 The EventContainer allows you to pass variables dynamically. \
 An example of how to add/retrieve variables.
 ```java
-EventContainer eventContainer = EventContainer.of()
+ParameterContainer parameterContainer = ParameterContainer.of()
         .putContainer("Hello");
-System.out.println(eventContainer.getContainer(String.class));
+System.out.println(parameterContainer.getContainer(String.class));
 ```
 
 And if you have several variables with the same type you can specify a name.
 ```java
-EventContainer eventContainer = EventContainer.of()
+ParameterContainer parameterContainer = ParameterContainer.of()
         .putContainer("test", "Hello");
-System.out.println(eventContainer.getContainer("test", String.class));
+System.out.println(parameterContainer.getContainer("test", String.class));
 ```
-In order to issue an event we just need to use the `publish` method which can take 2 arguments, the first is the object that inherits from our `Event` class and the second is an optional `EventContainer`. 
+In order to issue an event we just need to use the `publish` method which can take 2 arguments, the first is the object that inherits from our `Event` class and the second is an optional `ParameterContainer`. 
 ```java
 public class HelloWorld implements Event {
     
@@ -53,7 +53,7 @@ public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, eventContainer) ->  System.out.println(event.getClass()))
+        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
                 .withEventFilter(EventFilter.DERIVE)
                 .withEventPriority(EventPriority.HIGH);
         
