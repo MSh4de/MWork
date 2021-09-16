@@ -27,7 +27,7 @@ public class Main {
 }
 ```
 
-The EventContainer allows you to pass variables dynamically. \
+The ParameterContainer allows you to pass variables dynamically. \
 An example of how to add/retrieve variables.
 ```java
 ParameterContainer parameterContainer = ParameterContainer.of()
