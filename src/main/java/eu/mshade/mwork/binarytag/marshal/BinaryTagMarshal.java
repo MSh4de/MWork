@@ -23,9 +23,7 @@ public interface BinaryTagMarshal {
 
     <T> T unMarshal(BinaryTag<?> binaryTag, Class<T> aClass, ParameterContainer parameterContainer);
 
-    void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
-
-    void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
+    BinaryTagMarshalBufferModule registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer);
 
     BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorOf(Class<?> aClass) throws Exception;
 
