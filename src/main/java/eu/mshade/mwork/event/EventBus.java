@@ -4,7 +4,10 @@ import eu.mshade.mwork.ParameterContainer;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 public class EventBus<T> {
@@ -23,15 +26,27 @@ public class EventBus<T> {
 
     public <E extends T> void publish(E event, ParameterContainer parameterContainer){
         List<EventContext<T>> eventContexts = this.eventContexts.stream()
-                .filter(eventContext -> hasMatch(eventContext.getEventType(), event.getClass(), eventContext.getEventFilter()))
+                .filter(eventContext -> hasMatch(eventContext.getEventType(), (eventContext.getEventType().isInterface() && event.getClass().getInterfaces().length != 0 ? event.getClass().getInterfaces()[0] : event.getClass()), eventContext.getEventFilter()))
                 .collect(Collectors.toList());
-
-        for (EventPriority eventPriority : EventPriority.values()) {
-            onEvent(event, parameterContainer, eventPriority, eventContexts);
+        if (!eventContexts.isEmpty()){
+            for (EventPriority eventPriority : EventPriority.values()) {
+                onEvent(event, parameterContainer, eventPriority, eventContexts);
+            }
         }
     }
 
+    public <E extends T> void publishAsync(E event){
+        this.publishAsync(event, ParameterContainer.EMPTY);
+    }
+
+    public <E extends T> void publishAsync(E event, ParameterContainer parameterContainer) {
+        CompletableFuture.runAsync(() -> publish(event, parameterContainer));
+        //publish(event, parameterContainer);
+    }
+
+
     private <E extends T> void onEvent(E event, ParameterContainer eventContainer, EventPriority eventPriority, List<EventContext<T>> eventContexts){
+        //eventContexts.stream().filter(eventContext -> eventContext.getEventPriority() == eventPriority).forEach(eventContext -> scheduledExecutorService.execute(() -> eventContext.getEventListener().onEvent(event, eventContainer)));
         eventContexts.stream().filter(eventContext -> eventContext.getEventPriority() == eventPriority).forEach(eventContext -> eventContext.getEventListener().onEvent(event, eventContainer));
     }
 
