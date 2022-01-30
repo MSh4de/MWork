@@ -97,9 +97,8 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
             BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(aClass);
             return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, parameterContainer);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
@@ -107,9 +106,8 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         try {
             return unMarshal(binaryTag, aClass, ParameterContainer.EMPTY);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
@@ -117,9 +115,8 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         try {
             return (T) getBinaryTagAdaptorOf(aClass).deserialize(this, aClass, binaryTag, container);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
