@@ -64,10 +64,10 @@ public class DefaultBinaryTagBufferDriver implements BinaryTagBufferDriver {
     public void writeCompoundBinaryTag(CompoundBinaryTag compoundBinaryTag, OutputStream outputStream) {
         try(DataOutputStream dataOutputStream = new DataOutputStream(outputStream);){
             byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
-            dataOutputStream.writeByte(BinaryTagType.COMPOUND.getType());
+            dataOutputStream.writeByte(compoundBinaryTag.getType().getType());
             dataOutputStream.writeShort(bytes.length);
             dataOutputStream.write(bytes);
-            binaryTagBufferMap.get(BinaryTagType.COMPOUND).write(this, dataOutputStream, compoundBinaryTag);
+            binaryTagBufferMap.get(compoundBinaryTag.getType()).write(this, dataOutputStream, compoundBinaryTag);
         } catch (Exception e) {
             e.printStackTrace();
         }

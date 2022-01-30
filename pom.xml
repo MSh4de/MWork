@@ -4,18 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>eu.mshade</groupId>
+    <parent>
+        <artifactId>mshade</artifactId>
+        <groupId>eu.mshade</groupId>
+        <version>0.0.1</version>
+    </parent>
+
     <artifactId>mwork</artifactId>
     <version>0.0.1</version>
     <name>MWork</name>
-
-    <distributionManagement>
-        <repository>
-            <id>gitlab-maven</id>
-            <!--suppress UnresolvedMavenProperty -->
-            <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-        </repository>
-    </distributionManagement>
 
 
     <build>
@@ -69,7 +66,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>1.2.7</version>
         </dependency>
     </dependencies>
 

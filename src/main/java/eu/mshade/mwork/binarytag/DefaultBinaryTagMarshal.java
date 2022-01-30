@@ -2,10 +2,11 @@ package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.MWork;
 import eu.mshade.mwork.ParameterContainer;
-import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.marshal.*;
 import eu.mshade.mwork.binarytag.marshal.array.*;
 import eu.mshade.mwork.binarytag.marshal.primitive.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -17,7 +18,38 @@ import java.util.Map;
 public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
 
     private final static Map<Class<?>, BinaryTagType> CLASS_BINARY_TAG_TYPE = new HashMap<>();
-    private static final Map<Class<?>, BinaryTagMarshalBuffer<Object>> BINARY_TAG_ADAPTOR_MAP = new HashMap<>();
+    private final Map<Class<?>, BinaryTagMarshalBuffer<Object>> classBinaryTagMarshalBuffer = new HashMap<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(BinaryTagMarshal.class);
+
+
+    public DefaultBinaryTagMarshal() {
+        classBinaryTagMarshalBuffer.put(BinaryTagType.BYTE.getClazz(), new ByteBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHORT.getClazz(), new ShortBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.INTEGER.getClazz(), new IntegerBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.LONG.getClazz(), new LongBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.FLOAT.getClazz(), new FloatBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.DOUBLE.getClazz(), new DoubleBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.BYTE_ARRAY.getClazz(), new ByteArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.STRING.getClazz(), new StringBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.LIST.getClazz(), new ListBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.COMPOUND.getClazz(), new CompoundBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.INTEGER_ARRAY.getClazz(), new IntegerArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.LONG_ARRAY.getClazz(), new LongArrayBinaryTagMarshalBuffer());
+
+        classBinaryTagMarshalBuffer.put(BinaryTagType.BOOLEAN.getClazz(), new BooleanBinaryTagMarshalBuffer());
+
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHADE_BYTE_ARRAY.getClazz(), new ShadeByteArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHADE_LIST.getClazz(), new ShadeListBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHADE_COMPOUND.getClazz(), new ShadeCompoundBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHADE_INTEGER_ARRAY.getClazz(), new ShadeIntegerArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.SHADE_LONG_ARRAY.getClazz(), new ShadeLongArrayBinaryTagMarshalBuffer());
+
+        classBinaryTagMarshalBuffer.put(BinaryTagType.ZSTD_BYTE_ARRAY.getClazz(), new ZstdByteArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.ZSTD_LIST.getClazz(), new ZstdListBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.ZSTD_COMPOUND.getClazz(), new ZstdCompoundBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.ZSTD_INTEGER_ARRAY.getClazz(), new ZstdIntegerArrayBinaryTagMarshalBuffer());
+        classBinaryTagMarshalBuffer.put(BinaryTagType.ZSTD_LONG_ARRAY.getClazz(), new ZstdLongArrayBinaryTagMarshalBuffer());
+    }
 
     static {
 
@@ -42,33 +74,6 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
         CLASS_BINARY_TAG_TYPE.put(Boolean.class, BinaryTagType.BOOLEAN);
         CLASS_BINARY_TAG_TYPE.put(ArrayList.class, BinaryTagType.LIST);
         CLASS_BINARY_TAG_TYPE.put(List.class, BinaryTagType.LIST);
-
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BYTE.getClazz(), new ByteBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHORT.getClazz(), new ShortBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.INTEGER.getClazz(), new IntegerBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LONG.getClazz(), new LongBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.FLOAT.getClazz(), new FloatBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.DOUBLE.getClazz(), new DoubleBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BYTE_ARRAY.getClazz(), new ByteArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.STRING.getClazz(), new StringBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LIST.getClazz(), new ListBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.COMPOUND.getClazz(), new CompoundBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.INTEGER_ARRAY.getClazz(), new IntegerArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.LONG_ARRAY.getClazz(), new LongArrayBinaryTagMarshalBuffer());
-
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.BOOLEAN.getClazz(), new BooleanBinaryTagMarshalBuffer());
-
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_BYTE_ARRAY.getClazz(), new ShadeByteArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_LIST.getClazz(), new ShadeListBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_COMPOUND.getClazz(), new ShadeCompoundBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_INTEGER_ARRAY.getClazz(), new ShadeIntegerArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.SHADE_LONG_ARRAY.getClazz(), new ShadeLongArrayBinaryTagMarshalBuffer());
-
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_BYTE_ARRAY.getClazz(), new ZstdByteArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LIST.getClazz(), new ZstdListBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_COMPOUND.getClazz(), new ZstdCompoundBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_INTEGER_ARRAY.getClazz(), new ZstdIntegerArrayBinaryTagMarshalBuffer());
-        BINARY_TAG_ADAPTOR_MAP.put(BinaryTagType.ZSTD_LONG_ARRAY.getClazz(), new ZstdLongArrayBinaryTagMarshalBuffer());
     }
 
     @Override
@@ -92,8 +97,7 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
             BinaryTagMarshalBuffer binaryTagMarshalBuffer = getBinaryTagAdaptorOf(aClass);
             return binaryTagMarshalBuffer.serialize(this, o.getClass(), o, parameterContainer);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -116,22 +120,18 @@ public class DefaultBinaryTagMarshal implements BinaryTagMarshal {
     }
 
     @Override
-    public void registerAdaptor(List<Class<?>> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
-        aClass.forEach(clazz -> this.registerAdaptor(clazz, binaryTagMarshalBuffer));
-    }
-
-    @Override
-    public void registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
-        BINARY_TAG_ADAPTOR_MAP.putIfAbsent(aClass, (BinaryTagMarshalBuffer<Object>) binaryTagMarshalBuffer);
+    public BinaryTagMarshalBufferModule registerAdaptor(Class<?> aClass, BinaryTagMarshalBuffer<?> binaryTagMarshalBuffer) {
+        classBinaryTagMarshalBuffer.putIfAbsent(aClass, (BinaryTagMarshalBuffer<Object>) binaryTagMarshalBuffer);
+        return new DefaultBinaryTagMarshalBufferModule(binaryTagMarshalBuffer, this);
     }
 
     private BinaryTagMarshalBuffer<Object> getBinaryTagAdaptorByClass(Class<?> aClass) {
         if (CLASS_BINARY_TAG_TYPE.containsKey(aClass)) {
-            return BINARY_TAG_ADAPTOR_MAP.get(CLASS_BINARY_TAG_TYPE.get(aClass).getClazz());
-        } else if (BINARY_TAG_ADAPTOR_MAP.containsKey(aClass)) {
-            return BINARY_TAG_ADAPTOR_MAP.get(aClass);
+            return classBinaryTagMarshalBuffer.get(CLASS_BINARY_TAG_TYPE.get(aClass).getClazz());
+        } else if (classBinaryTagMarshalBuffer.containsKey(aClass)) {
+            return classBinaryTagMarshalBuffer.get(aClass);
         }
-        return BINARY_TAG_ADAPTOR_MAP.get(BinaryTagType.COMPOUND.getClazz());
+        return classBinaryTagMarshalBuffer.get(BinaryTagType.COMPOUND.getClazz());
     }
 
     @Override
