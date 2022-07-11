@@ -4,20 +4,18 @@ import com.github.luben.zstd.Zstd;
 import eu.mshade.mwork.MConsumer;
 import eu.mshade.mwork.MFunction;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface BinaryTagBuffer {
 
-    void write(BinaryTagBufferDriver binaryTagBufferDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws Exception;
+    void write(BinaryTagDriver binaryTagDriver, DataOutputStream outputStream, BinaryTag<?> binaryTag) throws IOException;
 
-    BinaryTag<?> read(BinaryTagBufferDriver binaryTagBufferDriver, DataInputStream inputStream) throws Exception;
+    BinaryTag<?> read(BinaryTagDriver binaryTagDriver, DataInputStream inputStream) throws IOException;
 
 
-    default void writeShade(DataOutputStream outputStream, MConsumer<DataOutputStream> consumer) throws Exception {
+    default void writeShade(DataOutputStream outputStream, Consumer<DataOutputStream> consumer) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
         consumer.accept(dataOutputStream);
@@ -26,7 +24,7 @@ public interface BinaryTagBuffer {
         dataOutputStream.close();
     }
     
-    default BinaryTag<?> readShade(DataInputStream inputStream, MFunction<DataInputStream, BinaryTag<?>> consumer) throws Exception {
+    default BinaryTag<?> readShade(DataInputStream inputStream, Function<DataInputStream, BinaryTag<?>> consumer) throws IOException {
         int size = inputStream.readInt();
         byte[] payload = new byte[size];
         inputStream.readFully(payload);
@@ -35,7 +33,7 @@ public interface BinaryTagBuffer {
         return ((ShadeBinaryTag<?>) consumer.apply(dataInputStream)).toShade();
     }
 
-    default void writeZstd(DataOutputStream outputStream, MConsumer<DataOutputStream> consumer) throws Exception {
+    default void writeZstd(DataOutputStream outputStream, Consumer<DataOutputStream> consumer) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
         consumer.accept(dataOutputStream);
@@ -47,7 +45,7 @@ public interface BinaryTagBuffer {
         byteArrayOutputStream.close();
     }
 
-    default BinaryTag<?> readZstd(DataInputStream inputStream, MFunction<DataInputStream, BinaryTag<?>> consumer) throws Exception {
+    default BinaryTag<?> readZstd(DataInputStream inputStream, Function<DataInputStream, BinaryTag<?>> consumer) throws IOException {
         int realLength = inputStream.readInt();
         int length = inputStream.readInt();
         byte[] payload = new byte[length];

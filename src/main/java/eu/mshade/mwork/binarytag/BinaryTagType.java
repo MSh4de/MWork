@@ -2,7 +2,8 @@ package eu.mshade.mwork.binarytag;
 
 import eu.mshade.mwork.binarytag.entity.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public enum BinaryTagType {

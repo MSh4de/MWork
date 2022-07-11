@@ -1,15 +1,13 @@
 package eu.mshade.test;
 
 import eu.mshade.mwork.binarytag.BinaryTagType;
-import eu.mshade.mwork.binarytag.DefaultBinaryTagBufferDriver;
-import eu.mshade.mwork.binarytag.DefaultBinaryTagMarshal;
+import eu.mshade.mwork.binarytag.BinaryTagDriver;
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
 import eu.mshade.mwork.binarytag.entity.StringBinaryTag;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Proxy;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,6 +19,26 @@ public class Test  {
     private Random randon = new Random();
 
     public Test() throws Exception {
+
+
+        int max = (int) Math.pow(2, 5);
+        int bits = 5+4;
+        int x = 10 << 5;
+        System.out.println(x);
+        System.out.println(calculateBits(x));
+        int individualValueMask = (1 << 5) - 1;
+        System.out.println(individualValueMask);
+        System.out.println(Arrays.toString(toBinary(x, bits)));
+
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+        for (boolean b : toBinary(x, bits)) {
+            dataOutputStream.writeBoolean(b);
+        }
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+        System.out.println("READBITSNUMBER: "+readBitsNumber(bits, dataInputStream));
 
         ListBinaryTag binaryTags = new ListBinaryTag(BinaryTagType.STRING);
         binaryTags.add(new StringBinaryTag("hey"));
@@ -64,7 +82,7 @@ public class Test  {
         System.out.println('\uffff');
 
         int sectionBitmask = 0;
-        boolean[] sections = new boolean[]{true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false};
+        boolean[] sections = new boolean[]{true, false, true, true, true, true, true, true, false, false, false, false, false, false, false, false};
         int maxBitmask = (1 << sections.length) - 1;
         //sectionBitmask = maxBitmask;
         int sectionCount = Integer.bitCount(maxBitmask);
@@ -76,11 +94,16 @@ public class Test  {
             }
         }
         boolean[] sendSections = new boolean[sectionCount];
-        for (int i = 0, mask = 1; i < sections.length; ++i, mask <<= 1) {
-            if ((sectionBitmask & mask) != 0) {
+        for (int i = 0; i < sections.length; ++i) {
+            if ((sectionBitmask & 1 << i) != 0) {
+                System.out.println("T: "+i);
                 sendSections[i] = sections[i];
             }
+
+
         }
+
+        System.out.println(Arrays.toString(sendSections));
 
         System.out.println(sectionBitmask);
 
@@ -99,13 +122,8 @@ public class Test  {
 
         AccountContext accountContext = new AccountContext("Oleksandr", 170987645);
 
-        DefaultBinaryTagBufferDriver defaultBinaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
-        DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
-        defaultBinaryTagMarshal.registerAdaptor(UUID.class, new UUIDMarshalBuffer());
-        
+        BinaryTagDriver defaultBinaryTagBufferDriver = new BinaryTagDriver();
 
-
-        defaultBinaryTagBufferDriver.writeCompoundBinaryTag((CompoundBinaryTag) defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
 
         /*
         JoinGame joinGame = new JoinGame(3, false, (byte)1, (byte) 1, 1,  new String[]{"minecraft:owverworld"}, "minecraft:world", 58024156541321L, 20, 12, false, true, false, false);
@@ -122,6 +140,8 @@ public class Test  {
         System.out.println(o.getClass());
         System.out.println(o.getName());
         System.out.println(o.getAge());
+
+
     }
 
     private Map<String, Integer> stringIntegerHashMap = new HashMap<>();
@@ -139,6 +159,23 @@ public class Test  {
                         Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
         return linkedHashMap.entrySet().stream().findFirst().map(Map.Entry::getKey).get();
+    }
+
+    public final int readBitsNumber(int size, DataInputStream dataInputStream) throws IOException {
+        boolean[] bytes = new boolean[size];
+        for (int i = 0; i < size; i++) {
+            bytes[i] = dataInputStream.readBoolean();
+        }
+        int result = 0;
+        for(int i = 0; i < size; i++){
+            result <<= 1;
+            result |= bytes[i] ? 1 : 0;
+        }
+        return result;
+    }
+
+    public final void writeBitsNumber(int v, int size, DataOutputStream dataOutputStream){
+
     }
 
     public byte writeVarInt(int value) {
@@ -180,6 +217,22 @@ public class Test  {
     private static int locToBlock(double loc) {
         final int floor = (int) loc;
         return floor == loc ? floor : floor - (int) (Double.doubleToRawLongBits(loc) >>> 63);
+    }
+
+    private boolean[] toBinary(int number, int bits) {
+        final boolean[] ret = new boolean[bits];
+        for (int i = 0; i < bits; i++) {
+            ret[bits - 1 - i] = (1 << i & number) != 0;
+        }
+        return ret;
+    }
+
+    public int calculateBits(int v){
+        int pow = 0;
+        while (Math.pow(2, pow) < v){
+            pow++;
+        }
+        return pow;
     }
 
 }

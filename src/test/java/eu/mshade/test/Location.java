@@ -1,8 +1,9 @@
 package eu.mshade.test;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class Location {
+public class Location implements Serializable {
 
     private int x, y, z;
     private UUID uuid = UUID.randomUUID();

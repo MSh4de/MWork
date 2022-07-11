@@ -19,6 +19,8 @@ public class FileTest {
          */
         randomAccessFile.seek(3);
         System.out.println(randomAccessFile.readByte());
+        System.out.println(randomAccessFile.getFilePointer());
+        System.out.println(randomAccessFile.length());
 
     }
 

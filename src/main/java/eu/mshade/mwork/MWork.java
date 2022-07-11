@@ -1,14 +1,10 @@
 package eu.mshade.mwork;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import eu.mshade.mwork.binarytag.BinaryTagBufferDriver;
-import eu.mshade.mwork.binarytag.DefaultBinaryTagBufferDriver;
-import eu.mshade.mwork.binarytag.DefaultBinaryTagMarshal;
-import eu.mshade.mwork.binarytag.marshal.BinaryTagMarshal;
+import eu.mshade.mwork.binarytag.BinaryTagDriver;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +19,7 @@ public final class MWork {
     private static Unsafe UNSAFE;
     private static Logger LOGGER = LoggerFactory.getLogger(MWork.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final BinaryTagBufferDriver binaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
-    private final BinaryTagMarshal binaryTagMarshal = new DefaultBinaryTagMarshal();
+    private final BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
 
     private MWork() {
 
@@ -37,7 +32,7 @@ public final class MWork {
         }
 
         mWork = this;
-        this.binaryTagMarshal.registerAdaptor(UUID.class, new UUIDBinaryTagMarshalBuffer());
+        this.binaryTagDriver.registerMarshal(UUID.class, new UUIDBinaryTagMarshal());
 
         SimpleModule simpleModule = new SimpleModule();
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -48,12 +43,8 @@ public final class MWork {
         this.objectMapper.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
     }
 
-    public BinaryTagBufferDriver getBinaryTagBufferDriver() {
-        return binaryTagBufferDriver;
-    }
-
-    public BinaryTagMarshal getBinaryTagMarshal() {
-        return binaryTagMarshal;
+    public BinaryTagDriver getBinaryTagDriver() {
+        return binaryTagDriver;
     }
 
     public ObjectMapper getObjectMapper() {
