@@ -13,6 +13,10 @@ public class ByteBinaryTag implements BinaryTag<Byte> {
         this.aByte = aByte;
     }
 
+    public ByteBinaryTag(boolean b){
+        this.aByte = (byte) (b ? 1 : 0);
+    }
+
     @Override
     public BinaryTagType getType() {
         return BinaryTagType.BYTE;
