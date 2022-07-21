@@ -43,6 +43,10 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
         this.putBinaryTag(key, new ByteBinaryTag(value));
     }
 
+    public void putByte(String key, int value){
+        this.putBinaryTag(key, new ByteBinaryTag((byte) value));
+    }
+
     public byte getByte(String key){
         return (byte) this.getBinaryTag(key).getValue();
     }
