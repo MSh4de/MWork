@@ -5,9 +5,7 @@ import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag>, ShadeBinaryTag<ShadeCompoundBinaryTag> {
@@ -19,7 +17,7 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
     }
 
     public CompoundBinaryTag() {
-        this(new LinkedHashMap<>());
+        this(new HashMap<>());
     }
 
     @Override
