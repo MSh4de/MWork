@@ -13,7 +13,7 @@ public class ShadeCompoundBinaryTag extends CompoundBinaryTag {
     }
 
     public ShadeCompoundBinaryTag() {
-        super(new LinkedHashMap<>());
+        super();
     }
 
     @Override

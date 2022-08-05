@@ -13,7 +13,7 @@ public class ZstdCompoundBinaryTag extends CompoundBinaryTag {
     }
 
     public ZstdCompoundBinaryTag() {
-        super(new LinkedHashMap<>());
+        super();
     }
 
     @Override
