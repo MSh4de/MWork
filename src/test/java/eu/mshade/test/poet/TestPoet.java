@@ -12,7 +12,10 @@ import java.io.IOException;
 
 public class TestPoet {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("WAITING");
+        Thread.sleep(40*1000);
+        System.out.println("RUN");
         BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
 
         File poetIndex = new File("poetIndex.dat");
@@ -26,7 +29,7 @@ public class TestPoet {
 
         BinaryTagPoet binaryTagPoet = new BinaryTagPoet(poetIndex, poetData, binaryTagDriver);
 
-        System.out.println(binaryTagPoet.getCompoundSectionIndex());
+        //System.out.println(binaryTagPoet.getCompoundSectionIndex());
 
         /*
         System.out.println(binaryTagPoet.readCompoundBinaryTag("cc"));
@@ -35,18 +38,20 @@ public class TestPoet {
          */
 
 
-        CompoundBinaryTag compoundBinaryTag = new ZstdCompoundBinaryTag();
+        for (int i = 0; i < 1000; i++) {
+            CompoundBinaryTag compoundBinaryTag = new ZstdCompoundBinaryTag();
 
-        for (int i = 0; i < 25; i++) {
-            compoundBinaryTag.putInt(""+i, i);
+            for (int i2 = 0; i2 < 25; i2++) {
+                compoundBinaryTag.putInt(""+i2, i2);
+            }
+
+            binaryTagPoet.writeCompoundBinaryTag("cc", compoundBinaryTag);
         }
-
-        binaryTagPoet.writeCompoundBinaryTag("cc", compoundBinaryTag);
 
         binaryTagPoet.writeCompoundSectionIndex();
 
 
-        System.out.println(binaryTagPoet.getCompoundSectionIndex());
+       // System.out.println(binaryTagPoet.getCompoundSectionIndex());
 
 
 
