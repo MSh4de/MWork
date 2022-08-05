@@ -7,54 +7,75 @@ import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ZstdCompoundBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ZstdListBinaryTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class BinaryTagPoet {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(BinaryTagPoet.class);
+
     private final BinaryTagDriver binaryTagDriver;
     private final File indexFile, dataFile;
-    private final RandomAccessFile randomAccessFile;
+    //private final RandomAccessFile randomAccessFile;
     private final CompoundSectionIndex compoundSectionIndex;
+    private final AsynchronousFileChannel asynchronousFileChannel;
 
     public BinaryTagPoet(File indexFile, File dataFile, BinaryTagDriver binaryTagDriver) {
         this.binaryTagDriver = binaryTagDriver;
         this.indexFile = indexFile;
         this.dataFile = dataFile;
         try {
-            this.randomAccessFile = new RandomAccessFile(dataFile, "rws");
-        } catch (FileNotFoundException e) {
+            //this.randomAccessFile = new RandomAccessFile(dataFile, "rw");
+            this.asynchronousFileChannel = AsynchronousFileChannel.open(dataFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.READ);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         compoundSectionIndex = readCompoundSectionIndex(indexFile);
     }
 
-    public CompoundBinaryTag readCompoundBinaryTag(String key) throws IOException{
+    public CompoundBinaryTag readCompoundBinaryTag(String key) throws IOException {
         List<SectionIndex> binaryTagIndices = compoundSectionIndex.getSectionIndices(key);
         if (binaryTagIndices == null) return null;
         Map<Integer, SectionIndex> sectionIndexByIndex = new HashMap<>();
         binaryTagIndices.forEach(sectionIndex -> sectionIndexByIndex.put(sectionIndex.getIndex(), sectionIndex));
 
-        byte[] payload = new byte[getSizeOfSectionIndex(binaryTagIndices)];
+        ByteBuffer payload = ByteBuffer.allocate(getSizeOfSectionIndex(binaryTagIndices));
         int offset = 0;
         for (int i = 0; i < binaryTagIndices.size(); i++) {
             SectionIndex sectionIndex = sectionIndexByIndex.get(i);
             try {
+                ByteBuffer byteBuffer = ByteBuffer.allocate(sectionIndex.getSize());
+                Future<Integer> read = asynchronousFileChannel.read(byteBuffer, sectionIndex.getStart());
+                read.get();
+                payload.put(byteBuffer.array());
+                /*
                 randomAccessFile.seek(sectionIndex.getStart());
                 randomAccessFile.read(payload, offset, sectionIndex.getSize());
+
+                 */
                 offset += sectionIndex.getSize();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error("Impossible to build data", e);
             }
         }
+        return binaryTagDriver.readCompoundBinaryTag(new ByteArrayInputStream(payload.array()));
 
-        return binaryTagDriver.readCompoundBinaryTag(new ByteArrayInputStream(payload));
     }
 
-    public void writeCompoundBinaryTag(String key, CompoundBinaryTag compoundBinaryTag) throws IOException {
+    public synchronized void writeCompoundBinaryTag(String key, CompoundBinaryTag compoundBinaryTag) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         binaryTagDriver.writeCompoundBinaryTag(compoundBinaryTag, byteArrayOutputStream);
         byte[] payload = byteArrayOutputStream.toByteArray();
@@ -71,11 +92,14 @@ public class BinaryTagPoet {
         } else {
             if (compoundSectionIndex.getFreeSectionIndices().isEmpty()) {
 
-                long length = randomAccessFile.length();
+                long length = asynchronousFileChannel.size();
                 SectionIndex sectionIndex = new SectionIndex(0, (int) length, (int) (length + payload.length));
                 sectionIndices.add(sectionIndex);
-                randomAccessFile.seek(length);
-                randomAccessFile.write(payload);
+                try {
+                    asynchronousFileChannel.write(ByteBuffer.wrap(payload), length).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
 
             } else {
 
@@ -88,7 +112,7 @@ public class BinaryTagPoet {
 
     }
 
-    private void writeInFreeSectionIndices(byte[] payload, List<SectionIndex> sectionIndices) throws IOException {
+    private void writeInFreeSectionIndices(byte[] payload, Collection<SectionIndex> sectionIndices) throws IOException {
         int index = 0;
         int binaryTagIndex = 0;
 
@@ -105,16 +129,33 @@ public class BinaryTagPoet {
                     compoundSectionIndex.addFreeSectionIndices(freeSectionIndex);
                 }
                 sectionIndex = new SectionIndex(binaryTagIndex++, sectionIndex.getStart(), sectionIndex.getStart()+size);
-
+                Future<Integer> write = asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, size), sectionIndex.getStart());
+                try {
+                    Integer integer = write.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+                /*
                 randomAccessFile.seek(sectionIndex.getStart());
                 randomAccessFile.write(payload, index, size);
+
+                 */
                 index+=size;
             } else {
-                long length = randomAccessFile.length();
+                long length = asynchronousFileChannel.size();
+                //long length = randomAccessFile.length();
                 sectionIndex = new SectionIndex(binaryTagIndex++, (int) length, (int) (length + (payload.length - index)));
-
+                Future<Integer> write = asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, sectionIndex.getSize()), sectionIndex.getStart());
+                try {
+                    Integer integer = write.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+                /*
                 randomAccessFile.seek(sectionIndex.getStart());
                 randomAccessFile.write(payload, index, sectionIndex.getSize());
+
+                 */
                 index += sectionIndex.getSize();
 
             }
