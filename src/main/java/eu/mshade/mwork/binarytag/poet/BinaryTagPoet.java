@@ -35,24 +35,26 @@ public class BinaryTagPoet {
         this.binaryTagDriver = binaryTagDriver;
         this.indexFile = indexFile;
         this.dataFile = dataFile;
-        this.compoundSectionIndex = this.readCompoundSectionIndex(indexFile);
         try {
             this.asynchronousFileChannel = AsynchronousFileChannel.open(dataFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.READ);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.compoundSectionIndex = this.readCompoundSectionIndex(indexFile);
 
     }
 
     public CompoundBinaryTag readCompoundBinaryTag(String key) throws IOException {
         List<SectionIndex> binaryTagIndices = compoundSectionIndex.getSectionIndices(key);
         if (binaryTagIndices == null) return null;
-        Map<Integer, SectionIndex> sectionIndexByIndex = new HashMap<>();
-        binaryTagIndices.forEach(sectionIndex -> sectionIndexByIndex.put(sectionIndex.getIndex(), sectionIndex));
+
+        // change by array
+        SectionIndex[] sectionIndices = new SectionIndex[binaryTagIndices.size()];
+        binaryTagIndices.forEach(sectionIndex -> sectionIndices[sectionIndex.getIndex()] = sectionIndex);
 
         ByteBuffer payload = ByteBuffer.allocate(getSizeOfSectionIndex(binaryTagIndices));
         for (int i = 0; i < binaryTagIndices.size(); i++) {
-            SectionIndex sectionIndex = sectionIndexByIndex.get(i);
+            SectionIndex sectionIndex = sectionIndices[i];
             try {
                 ByteBuffer byteBuffer = ByteBuffer.allocate(sectionIndex.getSize());
                 Future<Integer> read = asynchronousFileChannel.read(byteBuffer, sectionIndex.getStart());
@@ -107,14 +109,12 @@ public class BinaryTagPoet {
                     compoundSectionIndex.addFreeSectionIndices(freeSectionIndex);
                 }
                 sectionIndex = new SectionIndex(binaryTagIndex++, sectionIndex.getStart(), sectionIndex.getStart() + size);
-                Future<Integer> write = asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, size), sectionIndex.getStart());
-                write.get();
+                asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, size), sectionIndex.getStart()).get();
                 index += size;
             } else {
                 long length = asynchronousFileChannel.size();
                 sectionIndex = new SectionIndex(binaryTagIndex++, (int) length, (int) (length + (payload.length - index)));
-                Future<Integer> write = asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, sectionIndex.getSize()), sectionIndex.getStart());
-                write.get();
+                asynchronousFileChannel.write(ByteBuffer.wrap(payload, index, sectionIndex.getSize()), sectionIndex.getStart()).get();
                 index += sectionIndex.getSize();
             }
             sectionIndices.add(sectionIndex);
