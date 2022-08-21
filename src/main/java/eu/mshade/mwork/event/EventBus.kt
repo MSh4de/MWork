@@ -2,7 +2,6 @@ package eu.mshade.mwork.event
 
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * The event bus manages listeners and allows you to trigger your own events.
@@ -12,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
  * @since 0.0.1
  */
 class EventBus<T> {
-    private val eventContexts: Queue<EventContext<*>> = ConcurrentLinkedQueue()
+    private val eventContexts: TreeSet<EventContext<*>> = TreeSet<EventContext<*>>(EventComparator())
 
     /**
      * Register a listener of an event.
@@ -47,8 +46,6 @@ class EventBus<T> {
                 if(eventContext.eventType.isInterface) eventContext.eventType.javaClass else
                     eventContext.eventType.interfaces[0].javaClass, eventContext.eventFilter
             )}
-                // Sort the contexts by priority.
-            .sorted { o1, o2 -> EventComparator().compare(o1, o2) }
                 // Trigger the listener on each context.
             .forEach { eventContext -> eventContext.eventListener.onEvent(event) }
     }
