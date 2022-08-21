@@ -1,9 +1,10 @@
 package eu.mshade.mwork.event
 
-enum class EventPriority(var weight: Int) {
+class EventPriority private constructor(val weight: Int) {
 
-    HIGH(3),
-    NORMAL(2),
-    LOW(1);
-
+    companion object {
+        fun from(weight: Int): EventPriority {
+            return EventPriority(weight)
+        }
+    }
 }
