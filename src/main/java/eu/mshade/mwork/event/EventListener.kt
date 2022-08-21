@@ -1,10 +1,8 @@
 package eu.mshade.mwork.event
 
-import eu.mshade.mwork.ParameterContainer
-
 @FunctionalInterface
-interface EventListener<E> {
+interface EventListener<out E> {
 
-    fun onEvent(event: E, eventContainer: ParameterContainer)
+    fun onEvent(event: @UnsafeVariance E)
 
 }
