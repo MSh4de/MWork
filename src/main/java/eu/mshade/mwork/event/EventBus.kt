@@ -12,7 +12,7 @@ import java.util.*
  * @since 0.0.1
  */
 class EventBus<T> {
-    private val eventContexts: TreeSet<EventContext<*>> = TreeSet<EventContext<*>>(EventComparator())
+    private val eventContexts: PriorityQueue<EventContext<*>> = PriorityQueue<EventContext<*>>(EventComparator())
 
     /**
      * Register a listener of an event.
@@ -60,6 +60,11 @@ class EventBus<T> {
                 publish(event)
             }
         }
+    }
+
+    fun <E : T> getEventContexts(eventType: Class<E>, eventFilter: EventFilter): List<EventContext<T>> {
+        return eventContexts.stream().filter { hasMatch(it.eventType, eventType, eventFilter) }
+            .toList() as List<EventContext<T>>
     }
 
     /**
