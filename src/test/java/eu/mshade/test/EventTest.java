@@ -2,7 +2,7 @@ package eu.mshade.test;
 
 import eu.mshade.mwork.event.EventBus;
 import eu.mshade.mwork.event.EventFilter;
-import eu.mshade.mwork.event.EventPriority;
+import eu.mshade.mwork.event.EventPriorities;
 import eu.mshade.test.event.Event;
 import eu.mshade.test.event.HelloWorldEvent;
 import eu.mshade.test.event.WelcomeEvent;
@@ -12,19 +12,16 @@ public class EventTest {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, eventContainer) ->  {
-            String container = eventContainer.getContainer(String.class);
-            System.out.println(event.getClass());
-        })
+        eventBus.subscribe(Event.class, (event) -> System.out.println(event.getClass()))
                 .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.HIGH);
+                .withEventPriority(EventPriorities.LOW);
 
-        eventBus.subscribe(HelloWorldEvent.class, (event, eventContainer) -> System.out.println("HelloWorldEvent"))
+        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HelloWorldEvent"))
                 .withEventFilter(EventFilter.ONLY);
 
-        eventBus.subscribe(HelloWorldEvent.class, (event, eventContainer) -> System.out.println("HEY"))
+        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HEY"))
                 .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.LOW);
+                .withEventPriority(EventPriorities.HIGH);
 
         System.out.println(eventBus.getEventContexts(WelcomeEvent.class, EventFilter.DERIVE));
 
