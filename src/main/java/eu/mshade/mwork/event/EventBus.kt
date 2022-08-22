@@ -1,7 +1,8 @@
 package eu.mshade.mwork.event
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * The event bus manages listeners and allows you to trigger your own events.
@@ -42,7 +43,7 @@ class EventBus<T> {
         eventContexts.stream()
             // Filter out contexts that don't match the event type or any subtype (EventFilter logic).
             .filter { eventContext -> hasMatch(
-                eventContext.eventType,
+                eventContext.eventType.javaClass,
                 if(eventContext.eventType.isInterface) eventContext.eventType.javaClass else
                     eventContext.eventType.interfaces[0].javaClass, eventContext.eventFilter
             )}
@@ -54,11 +55,15 @@ class EventBus<T> {
      * Do the same as [publish] but asynchronously.
      */
     fun <E : T> publishAsync(event: E) {
-        CompletableFuture.runAsync { publish(event) }
+        runBlocking {
+            launch {
+                publish(event)
+            }
+        }
     }
 
     /**
-     * Check if whether from and to are equals or if from is a subtype of to<br>
+     * Check whether from and to are equals or if from is a subtype of to<br>
      * depending on the eventFilter.
      * @param from The event's class
      * @param to The event's class or any sub interface of it
