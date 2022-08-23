@@ -12,16 +12,17 @@ public class EventTest {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event) -> System.out.println(event.getClass()))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriorities.LOW);
+        eventBus.subscribe(Event.class, (event) -> System.out.println(event.getClass()),
+                EventPriorities.LOW, EventFilter.DERIVE);
 
-        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HelloWorldEvent"))
-                .withEventFilter(EventFilter.ONLY);
+        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HelloWorldEvent - HIGH"),
+                        EventPriorities.HIGH, EventFilter.ONLY);
 
-        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HEY"))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriorities.HIGH);
+        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HelloWorldEvent - LOW"),
+                EventPriorities.LOW, EventFilter.ONLY);
+
+        eventBus.subscribe(HelloWorldEvent.class, (event) -> System.out.println("HEY"), EventPriorities.HIGH,
+                        EventFilter.DERIVE);
 
         System.out.println(eventBus.getEventContexts(WelcomeEvent.class, EventFilter.DERIVE));
 
