@@ -4,9 +4,9 @@ interface EventPriorities {
 
     companion object {
         @JvmField val BY_WEIGHT: MutableMap<Int, EventPriority> = mutableMapOf()
-        @JvmField val HIGH: EventPriority = EventPriority.from(3)
+        @JvmField val HIGH: EventPriority = EventPriority.from(1)
         @JvmField val NORMAL: EventPriority = EventPriority.from(2)
-        @JvmField val LOW: EventPriority = EventPriority.from(1)
+        @JvmField val LOW: EventPriority = EventPriority.from(3)
 
         @JvmStatic fun values(): List<EventPriority> = listOf(HIGH, NORMAL, LOW)
 
