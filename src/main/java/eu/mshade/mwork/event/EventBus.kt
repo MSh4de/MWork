@@ -20,10 +20,13 @@ class EventBus<T> {
      * @param eventListener your listener
      * @return An [EventContext] to manage listening options
      */
-    fun <E : T> subscribe(eventClass: Class<E>, eventListener: EventListener<E>): EventContext<E> {
+    fun <E : T> subscribe(eventClass: Class<E>, eventListener: EventListener<E>,
+                          eventPriority: EventPriority = EventPriorities.NORMAL,
+                          eventFilter: EventFilter = EventFilter.ONLY) {
         val eventContext = DefaultEventContext(eventClass, eventListener)
+        eventContext.withEventFilter(eventFilter)
+        eventContext.withEventPriority(eventPriority)
         eventContexts.add(eventContext)
-        return eventContext
     }
 
     /**
