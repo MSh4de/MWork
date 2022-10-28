@@ -17,10 +17,16 @@ public class ListBinaryTag extends ArrayList<BinaryTag<?>> implements BinaryTag<
         this.elementType = elementType;
     }
 
+    public ListBinaryTag(BinaryTagType elementType, int initialCapacity) {
+        super(initialCapacity);
+        this.elementType = elementType;
+    }
+
     public ListBinaryTag(List<BinaryTag<?>> binaryTagList, BinaryTagType elementType) {
         super(binaryTagList);
         this.elementType = elementType;
     }
+
 
     @Override
     public BinaryTagType getType() {
