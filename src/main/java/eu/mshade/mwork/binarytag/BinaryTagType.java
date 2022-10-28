@@ -34,12 +34,14 @@ public enum BinaryTagType {
     ZSTD_LIST(ZstdListBinaryTag.class, 20),
     ZSTD_COMPOUND(ZstdCompoundBinaryTag.class, 21),
     ZSTD_INTEGER_ARRAY(ZstdIntegerArrayBinaryTag.class, 22),
-    ZSTD_LONG_ARRAY(ZstdLongArrayBinaryTag.class, 23);
+    ZSTD_LONG_ARRAY(ZstdLongArrayBinaryTag.class, 23),
+
+    ARRAY(ArrayBinaryTag.class, 24);
 
 
 
     private static final Map<Integer, BinaryTagType> BY_ID = new HashMap<>();
-    private static final Map<Class<? extends BinaryTag<?>>, BinaryTagType> BY_CLASS = new HashMap<>();
+    private static final Map<Class<?>, BinaryTagType> BY_CLASS = new HashMap<>();
 
     static {
         for (BinaryTagType binaryTagType : BinaryTagType.values()) {
@@ -48,10 +50,10 @@ public enum BinaryTagType {
         }
     }
 
-    private final Class<? extends BinaryTag<?>> aClass;
+    private final Class<?> aClass;
     private final int id;
 
-    BinaryTagType(Class<? extends BinaryTag<?>> aClass, int id) {
+    BinaryTagType(Class<?> aClass, int id) {
         this.aClass = aClass;
         this.id = id;
     }
@@ -60,7 +62,7 @@ public enum BinaryTagType {
         return id;
     }
 
-    public Class<? extends BinaryTag<?>> getClazz() {
+    public Class<?> getClazz() {
         return aClass;
     }
 

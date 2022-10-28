@@ -45,6 +45,8 @@ public class BinaryTagDriver {
        this.binaryTagBufferByBinaryTagType.put(BinaryTagType.ZSTD_COMPOUND, new ZstdCompoundBinaryTagBuffer());
        this.binaryTagBufferByBinaryTagType.put(BinaryTagType.ZSTD_INTEGER_ARRAY, new ZstdIntegerArrayBinaryTagBuffer());
        this.binaryTagBufferByBinaryTagType.put(BinaryTagType.ZSTD_LONG_ARRAY, new ZstdLongArrayBinaryTagBuffer());
+
+       this.binaryTagBufferByBinaryTagType.put(BinaryTagType.ARRAY, new ArrayBinaryTagBuffer());
     }
 
 
