@@ -1,14 +1,18 @@
 package eu.mshade.mwork.binarytag.entity;
 
+import eu.mshade.mwork.PrettyString;
 import eu.mshade.mwork.binarytag.BinaryTag;
 import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.ShadeBinaryTag;
 import eu.mshade.mwork.binarytag.ZstdBinaryTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
 
-public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag>, ShadeBinaryTag<ShadeCompoundBinaryTag> {
+public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, ZstdBinaryTag<ZstdCompoundBinaryTag>, ShadeBinaryTag<ShadeCompoundBinaryTag>, PrettyString {
+
+    public final static CompoundBinaryTag EMPTY = new CompoundBinaryTag();
 
     private final Map<String, BinaryTag<?>> binaryTagMap;
 
@@ -160,6 +164,26 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
                 '}';
     }
 
+    @NotNull
+    @Override
+    public String toPrettyString(int deep){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("CompoundBinaryTag{").append(System.lineSeparator());
+        for (Map.Entry<String, BinaryTag<?>> entry : binaryTagMap.entrySet()) {
+            stringBuilder.append(" ".repeat(deep+1));
+            stringBuilder.append(entry.getKey()).append(": ");
+            if(entry.getValue() instanceof PrettyString){
+                stringBuilder.append(((PrettyString) entry.getValue()).toPrettyString(deep + 1));
+            } else {
+                stringBuilder.append(entry.getValue().getValue());
+            }
+            stringBuilder.append(System.lineSeparator());
+        }
+        stringBuilder.append(" ".repeat(deep));
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
     @Override
     public ZstdCompoundBinaryTag toZstd() {
         return new ZstdCompoundBinaryTag(binaryTagMap);
@@ -170,4 +194,5 @@ public class CompoundBinaryTag implements BinaryTag<Map<String, BinaryTag<?>>>, 
     public ShadeCompoundBinaryTag toShade() {
         return new ShadeCompoundBinaryTag(binaryTagMap);
     }
+
 }
