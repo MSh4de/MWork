@@ -8,10 +8,8 @@ import eu.mshade.mwork.binarytag.poet.SectionIndex;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -25,7 +23,7 @@ public class TestChunk {
         System.out.println(binaryTagPoet.getCompoundSectionIndex().getSectionIndices("0,0"));
         SectionIndex target = binaryTagPoet.getCompoundSectionIndex().getSectionIndices("0,0").get(0);
         Map<String, List<SectionIndex>> collision = new HashMap<>();
-        System.out.println(binaryTagPoet.readCompoundBinaryTag("0,0"));
+        System.out.println(Arrays.equals(binaryTagPoet.readCompoundBinaryTag("0,0").getByteArray("biomes"), binaryTagPoet.readCompoundBinaryTag("1,0").getByteArray("biomes")));
         binaryTagPoet.getCompoundSectionIndex().getSectionIndicesByName().forEach((s, sectionIndices) -> {
 
             if (!s.equalsIgnoreCase("0,0")){
@@ -37,27 +35,7 @@ public class TestChunk {
             }
         });
 
-        System.out.println(collision);
-        long start = System.currentTimeMillis();
-        List<CompletableFuture<CompoundBinaryTag>> completableFutures = new ArrayList<>();
-        binaryTagPoet.getCompoundSectionIndex().getSectionIndicesByName().forEach((s, sectionIndices) -> {
-            CompletableFuture<CompoundBinaryTag> compoundBinaryTagCompletableFuture = new CompletableFuture<>();
-            compoundBinaryTagCompletableFuture.completeAsync(() -> {
-                try {
-                    return binaryTagPoet.readCompoundBinaryTag(s);
-                } catch (IOException e) {
-                    return null;
-                }
-            });
-            completableFutures.add(compoundBinaryTagCompletableFuture);
-        });
-
-        try {
-            Void unused = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).get();
-            System.out.println("done in "+(System.currentTimeMillis() - start)+" ms");
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+//        System.out.println(collision);
         //System.out.println(binaryTagPoet.getCompoundSectionIndex());
 
     }

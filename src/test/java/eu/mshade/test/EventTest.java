@@ -15,6 +15,7 @@ public class EventTest {
         eventBus.subscribe(Event.class, (event, eventContainer) ->  {
             String container = eventContainer.getContainer(String.class);
             System.out.println(event.getClass());
+
         })
                 .withEventFilter(EventFilter.DERIVE)
                 .withEventPriority(EventPriority.HIGH);

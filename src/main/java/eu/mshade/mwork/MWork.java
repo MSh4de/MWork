@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public final class MWork {
 
+
     private static MWork mWork;
     private static Unsafe UNSAFE;
     private static Logger LOGGER = LoggerFactory.getLogger(MWork.class);
