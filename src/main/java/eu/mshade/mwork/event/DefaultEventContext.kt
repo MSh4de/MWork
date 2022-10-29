@@ -7,12 +7,12 @@ class DefaultEventContext<E>(override var eventType: Class<E>, override var even
 
     override fun withEventFilter(eventFilter: EventFilter): EventContext<E> {
         this.eventFilter = eventFilter
-        return this;
+        return this
     }
 
     override fun withEventPriority(eventPriority: EventPriority): EventContext<E> {
         this.eventPriority = eventPriority
-        return this;
+        return this
     }
 
     override fun toString(): String {

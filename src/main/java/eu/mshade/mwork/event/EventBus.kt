@@ -20,9 +20,11 @@ class EventBus<T> {
      * @param eventListener your listener
      * @return An [EventContext] to manage listening options
      */
-    fun <E : T> subscribe(eventClass: Class<E>, eventListener: EventListener<E>,
-                          eventPriority: EventPriority = EventPriorities.NORMAL,
-                          eventFilter: EventFilter = EventFilter.ONLY) {
+    fun <E : T> subscribe(
+        eventClass: Class<E>, eventListener: EventListener<E>,
+        eventPriority: EventPriority = EventPriorities.NORMAL,
+        eventFilter: EventFilter = EventFilter.ONLY
+    ) {
         val eventContext = DefaultEventContext(eventClass, eventListener)
         eventContext.withEventFilter(eventFilter)
         eventContext.withEventPriority(eventPriority)
@@ -44,14 +46,24 @@ class EventBus<T> {
      */
     fun <E : T> publish(event: E) {
         eventContexts.stream()
-            // Filter out contexts that don't match the event type or any subtype (EventFilter logic).
-            .filter { eventContext -> hasMatch(
-                eventContext.eventType.javaClass,
-                if(eventContext.eventType.isInterface) eventContext.eventType.javaClass else
-                    eventContext.eventType.interfaces[0].javaClass, eventContext.eventFilter
-            )}
-                // Trigger the listener on each context.
-            .forEach { eventContext -> eventContext.eventListener.onEvent(event) }
+            .filter {
+                hasMatch(
+                    it.eventType,
+                    if(it.eventType.isInterface && event!!::class.java
+                            .interfaces.isNotEmpty())
+                     event!!::class.java.interfaces[0] else event!!::class.java
+                , it.eventFilter)
+            }
+            .forEach { it.eventListener.onEvent(event) }
+        /*        eventContexts.stream()
+                    // Filter out contexts that don't match the event type or any subtype (EventFilter logic).
+                    .filter { eventContext -> hasMatch(
+                        eventContext.eventType.javaClass,
+                        if(eventContext.eventType.isInterface) eventContext.eventType.javaClass else
+                            eventContext.eventType.interfaces[0].javaClass, eventContext.eventFilter
+                    )}
+                        // Trigger the listener on each context.
+                    .forEach { eventContext -> eventContext.eventListener.onEvent(event) }*/
     }
 
     /**
