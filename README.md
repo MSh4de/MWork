@@ -13,35 +13,19 @@ public interface Event {
 }
 ```
 
-When listening to a class you can specify if you want to listen only to that class or to the classes that inherit it by default it's in `ONLY`, in our case we want to listen to everything so we put in `DERIVE`.
+When listening to a class you can specify if you want to listen only to that class or to the classes that inherit it. By default, the `ONLY` filter mode is selected, in our case we want to listen to everything so we set it in `DERIVE` mode.
 
 ```java
 public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.HIGH);
+        eventBus.subscribe(Event.class, (event) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
     }
 }
 ```
 
-The ParameterContainer allows you to pass variables dynamically. \
-An example of how to add/retrieve variables.
-```java
-ParameterContainer parameterContainer = ParameterContainer.of()
-        .putContainer("Hello");
-System.out.println(parameterContainer.getContainer(String.class));
-```
-
-And if you have several variables with the same type you can specify a name.
-```java
-ParameterContainer parameterContainer = ParameterContainer.of()
-        .putContainer("test", "Hello");
-System.out.println(parameterContainer.getContainer("test", String.class));
-```
-In order to issue an event we just need to use the `publish` method which can take 2 arguments, the first is the object that inherits from our `Event` class and the second is an optional `ParameterContainer`. 
+In order to issue an event we just need to use the `publish` method, you just need to pass the object that inherits from our `Event` class in parameter.
 ```java
 public class HelloWorld implements Event {
     
@@ -53,9 +37,7 @@ public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.HIGH);
+        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
         
         eventBus.publish(new HelloWorld());
     }
@@ -94,11 +76,3 @@ compoundBinaryTag.putLong("time", account.getTime());
 
 defaultBinaryTagBufferDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
 ```
-You can see that it's quite tedious to write our object so there is another way to write it more easily.
-
-```java
-DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
-defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
-```
-There are lots of little tools, we can specify a special marshal for a type, apply a compression on a variable.\
-Later on, there will be a mapping system to allow to read a very big file quickly and with few resources, it will be useful for schematics for example.
