@@ -76,11 +76,3 @@ compoundBinaryTag.putLong("time", account.getTime());
 
 defaultBinaryTagBufferDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
 ```
-You can see that it's quite tedious to write our object so there is another way to write it more easily.
-
-```java
-DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
-defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
-```
-There are lots of little tools, we can specify a special marshal for a type, apply a compression on a variable.\
-Later on, there will be a mapping system to allow to read a very big file quickly and with few resources, it will be useful for schematics for example.
