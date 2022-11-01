@@ -5,7 +5,6 @@ import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 
@@ -25,7 +24,7 @@ class EndBinaryTagBuffer : BinaryTagBuffer {
 class ByteBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeByte(binaryTag!!.getValue() as Int)
+        outputStream.writeByte(binaryTag.getValue() as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -37,7 +36,7 @@ class ByteBinaryTagBuffer : BinaryTagBuffer {
 class ShortBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeShort(binaryTag!!.getValue() as Int)
+        outputStream.writeShort(binaryTag.getValue() as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -46,14 +45,14 @@ class ShortBinaryTagBuffer : BinaryTagBuffer {
 
 }
 
-class IntegerBinaryTagBuffer : BinaryTagBuffer {
+class IntBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeInt(binaryTag!!.getValue() as Int)
+        outputStream.writeInt(binaryTag.getValue() as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
-        return IntegerBinaryTag(inputStream.readInt())
+        return IntBinaryTag(inputStream.readInt())
     }
 
 }
@@ -61,7 +60,7 @@ class IntegerBinaryTagBuffer : BinaryTagBuffer {
 class LongBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeLong(binaryTag!!.getValue() as Long)
+        outputStream.writeLong(binaryTag.getValue() as Long)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -73,7 +72,7 @@ class LongBinaryTagBuffer : BinaryTagBuffer {
 class FloatBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeFloat(binaryTag!!.getValue() as Float)
+        outputStream.writeFloat(binaryTag.getValue() as Float)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -84,7 +83,7 @@ class FloatBinaryTagBuffer : BinaryTagBuffer {
 class DoubleBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeDouble(binaryTag!!.getValue() as Double)
+        outputStream.writeDouble(binaryTag.getValue() as Double)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -96,7 +95,7 @@ class DoubleBinaryTagBuffer : BinaryTagBuffer {
 class ByteArrayBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val byteArray = binaryTag!!.getValue() as ByteArray
+        val byteArray = binaryTag.getValue() as ByteArray
         outputStream.writeInt(byteArray.size)
         outputStream.write(byteArray)
     }
@@ -113,7 +112,7 @@ class ByteArrayBinaryTagBuffer : BinaryTagBuffer {
 class StringBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val string = binaryTag!!.getValue() as String
+        val string = binaryTag.getValue() as String
         val bytes: ByteArray = string.toByteArray(StandardCharsets.UTF_8)
         outputStream.writeShort(bytes.size)
         outputStream.write(bytes)
@@ -135,15 +134,15 @@ class ListBinaryTagBuffer : BinaryTagBuffer {
         outputStream.writeByte(listBinaryTag.elementType.getIdentifier())
         outputStream.writeInt(listBinaryTag.size())
         val bufferByType = binaryTagDriver.getBufferByType(listBinaryTag.elementType)
-        for (i in 0 until listBinaryTag.size()) {
-            bufferByType!!.write(binaryTagDriver, outputStream, listBinaryTag.get(i))
+        listBinaryTag.getValue().forEach{
+            bufferByType!!.write(binaryTagDriver, outputStream, it)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
-        val tagType: BinaryTagTypeKey = BinaryTagType.getTagTypeById(inputStream!!.readByte())
+        val tagType: BinaryTagTypeKey = BinaryTagType.getTagTypeById(inputStream.readByte())
         val listBinaryTag = ListBinaryTag(tagType)
-        val binaryTagBuffer = binaryTagDriver!!.getBufferByType(tagType)
+        val binaryTagBuffer = binaryTagDriver.getBufferByType(tagType)
         val length = inputStream.readInt()
         for (i in 0 until length) {
             listBinaryTag.add(binaryTagBuffer!!.read(binaryTagDriver, inputStream))
@@ -162,7 +161,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
             outputStream.writeUTF(entry.key)
             binaryTagDriver.getBufferByType(entry.value.getType())!!.write(binaryTagDriver, outputStream, entry.value)
         }
-        outputStream.writeByte(0)
+        outputStream.write(0)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): CompoundBinaryTag {
@@ -171,7 +170,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
         do {
             val b = inputStream.readByte()
             tagTypeById = BinaryTagType.getTagTypeById(b)
-            if (tagTypeById !== BinaryTagType.END) {
+            if (tagTypeById != BinaryTagType.END) {
                 val length = inputStream.readShort()
                 val bytes = ByteArray(length.toInt())
                 inputStream.readFully(bytes)
@@ -179,7 +178,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
                 compoundBinaryTag.putBinaryTag(name, binaryTagDriver.getBufferByType(tagTypeById)!!
                     .read(binaryTagDriver, inputStream))
             }
-        } while (tagTypeById !== BinaryTagType.END)
+        } while (tagTypeById != BinaryTagType.END)
         return compoundBinaryTag
     }
 
@@ -201,7 +200,7 @@ class IntegerArrayBinaryTagBuffer : BinaryTagBuffer {
         for (i in 0 until size) {
             intArray[i] = inputStream.readInt()
         }
-        return IntegerArrayBinaryTag(intArray)
+        return IntArrayBinaryTag(intArray)
     }
 
 }
