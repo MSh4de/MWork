@@ -2,6 +2,7 @@ package eu.mshade.mwork.binarytag.buffer
 
 import com.github.luben.zstd.Zstd
 import eu.mshade.mwork.binarytag.*
+import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag
 import java.io.*
 import java.util.function.Consumer
@@ -12,14 +13,14 @@ class ZstdByteArrayBinaryTagBuffer : BinaryTagBuffer {
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.BYTE_ARRAY)
         writeZstd(outputStream){
-            bufferByType!!.write(binaryTagDriver, outputStream, binaryTag)
+            bufferByType!!.write(binaryTagDriver, it, binaryTag)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.BYTE_ARRAY)
         return ZstdByteArrayBinaryTag(readZstd(inputStream){
-            bufferByType!!.read(binaryTagDriver, inputStream)
+            bufferByType!!.read(binaryTagDriver, it)
         }.getValue() as ByteArray)
     }
 }
@@ -29,15 +30,15 @@ class ZstdListBinaryTagBuffer : BinaryTagBuffer {
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LIST)
         writeZstd(outputStream) {
-            bufferByType!!.write(binaryTagDriver, outputStream, binaryTag)
+            bufferByType!!.write(binaryTagDriver, it, binaryTag)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LIST)
         val listBinaryTag = readZstd(inputStream) {
-            bufferByType!!.read(binaryTagDriver, inputStream)
-        }.getValue() as ListBinaryTag
+            bufferByType!!.read(binaryTagDriver, it)
+        } as ListBinaryTag
         return ZstdListBinaryTag(listBinaryTag.elementType, listBinaryTag.getValue())
     }
 
@@ -48,16 +49,16 @@ class ZstdCompoundBinaryTagBuffer : BinaryTagBuffer {
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.COMPOUND)
         writeZstd(outputStream) {
-            bufferByType!!.write(binaryTagDriver, outputStream, binaryTag)
+            bufferByType!!.write(binaryTagDriver, it, binaryTag)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.COMPOUND)
         val tagMap = readZstd(inputStream) {
-            bufferByType!!.read(binaryTagDriver, inputStream)
-        }.getValue() as MutableMap<String, BinaryTag<*>>
-        return ZstdCompoundBinaryTag(tagMap)
+            bufferByType!!.read(binaryTagDriver, it)
+        } as CompoundBinaryTag
+        return ZstdCompoundBinaryTag(tagMap.getValue())
     }
 
 }
@@ -65,16 +66,16 @@ class ZstdCompoundBinaryTagBuffer : BinaryTagBuffer {
 class ZstdIntegerArrayBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INTEGER_ARRAY)
+        val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INT_ARRAY)
         writeZstd(outputStream) {
-            bufferByType!!.write(binaryTagDriver, outputStream, binaryTag)
+            bufferByType!!.write(binaryTagDriver, it, binaryTag)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
-        val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INTEGER_ARRAY)
-        return ZstdIntegerArrayBinaryTag(readZstd(inputStream) {
-            bufferByType!!.read(binaryTagDriver, inputStream)
+        val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INT_ARRAY)
+        return ZstdIntArrayBinaryTag(readZstd(inputStream) {
+            bufferByType!!.read(binaryTagDriver, it)
         }.getValue() as IntArray)
     }
 
@@ -85,26 +86,26 @@ class ZstdLongArrayBinaryTagBuffer : BinaryTagBuffer {
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LONG_ARRAY)
         writeZstd(outputStream) {
-            bufferByType!!.write(binaryTagDriver, outputStream, binaryTag)
+            bufferByType!!.write(binaryTagDriver, it, binaryTag)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LONG_ARRAY)
         return ZstdLongArrayBinaryTag(readZstd(inputStream) {
-            bufferByType!!.read(binaryTagDriver, inputStream)
+            bufferByType!!.read(binaryTagDriver, it)
         }.getValue() as LongArray)
     }
 
 }
 
 
-private fun writeZstd(outputStream: DataOutputStream, consumer: Consumer<DataOutputStream?>) {
+private fun writeZstd(outputStream: DataOutputStream, consumer: Consumer<DataOutputStream>) {
     val byteArrayOutputStream = ByteArrayOutputStream()
     val dataOutputStream = DataOutputStream(byteArrayOutputStream)
     consumer.accept(dataOutputStream)
     val compress = Zstd.compress(byteArrayOutputStream.toByteArray())
-    outputStream.writeInt(dataOutputStream.size())
+    outputStream.writeInt(byteArrayOutputStream.size())
     outputStream.writeInt(compress.size)
     outputStream.write(compress)
     dataOutputStream.close()
