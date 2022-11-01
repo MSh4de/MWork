@@ -7,16 +7,16 @@ import java.nio.charset.StandardCharsets
 import java.util.function.Supplier
 
 class BinaryTagDriver {
-    private val binaryTagBufferByBinaryTagType: MutableMap<BinaryTagTypeKey, BinaryTagBuffer> = HashMap()
+
+    private val binaryTagBufferByBinaryTagType: MutableMap<BinaryTagKey, BinaryTagBuffer> = HashMap()
     private val binaryTagMarshalByType: MutableMap<Class<*>, BinaryTagMarshal<Any>> = HashMap()
-    private val binaryTagDynamicMarshalByType: MutableMap<Class<*>, BinaryTagDynamicMarshal> = HashMap()
 
     init {
         binaryTagBufferByBinaryTagType[BinaryTagType.END] = EndBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.BYTE] = ByteBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.SHORT] = ShortBinaryTagBuffer()
-        binaryTagBufferByBinaryTagType[BinaryTagType.INTEGER] =
-            IntegerBinaryTagBuffer()
+        binaryTagBufferByBinaryTagType[BinaryTagType.INT] =
+            IntBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.LONG] = LongBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.FLOAT] = FloatBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.DOUBLE] = DoubleBinaryTagBuffer()
@@ -24,7 +24,7 @@ class BinaryTagDriver {
         binaryTagBufferByBinaryTagType[BinaryTagType.BYTE_ARRAY] = ByteArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.LIST] = ListBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.COMPOUND] = CompoundBinaryTagBuffer()
-        binaryTagBufferByBinaryTagType[BinaryTagType.INTEGER_ARRAY] = IntegerArrayBinaryTagBuffer()
+        binaryTagBufferByBinaryTagType[BinaryTagType.INT_ARRAY] = IntegerArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.LONG_ARRAY] = LongArrayBinaryTagBuffer()
 
         binaryTagBufferByBinaryTagType[BinaryTagType.BOOLEAN] = BooleanBinaryTagBuffer()
@@ -32,24 +32,23 @@ class BinaryTagDriver {
         binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_BYTE_ARRAY] = ZstdByteArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_LIST] = ZstdListBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_COMPOUND] = ZstdCompoundBinaryTagBuffer()
-        binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_INTEGER_ARRAY] = ZstdIntegerArrayBinaryTagBuffer()
+        binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_INT_ARRAY] = ZstdIntegerArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.ZSTD_LONG_ARRAY] = ZstdLongArrayBinaryTagBuffer()
 
         binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_BYTE_ARRAY] = DeflateByteArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_LIST] = DeflateListBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_COMPOUND] = DeflateCompoundBinaryTagBuffer()
-        binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_INTEGER_ARRAY] = DeflateIntegerArrayBinaryTagBuffer()
+        binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_INT_ARRAY] = DeflateIntegerArrayBinaryTagBuffer()
         binaryTagBufferByBinaryTagType[BinaryTagType.DEFLATE_LONG_ARRAY] = DeflateLongArrayBinaryTagBuffer()
 
     }
 
-    fun getBufferByType(binaryTagType: BinaryTagTypeKey): BinaryTagBuffer? {
+    fun getBufferByType(binaryTagType: BinaryTagKey): BinaryTagBuffer? {
         return binaryTagBufferByBinaryTagType[binaryTagType]
     }
 
-    fun writeCompoundBinaryTag(compoundBinaryTag: CompoundBinaryTag, file: File?) {
-        val fileOutputStream: FileOutputStream
-        fileOutputStream = try {
+    fun writeCompoundBinaryTag(compoundBinaryTag: CompoundBinaryTag, file: File) {
+        val fileOutputStream: FileOutputStream = try {
             FileOutputStream(file)
         } catch (e: FileNotFoundException) {
             throw RuntimeException(e)
@@ -57,7 +56,7 @@ class BinaryTagDriver {
         writeCompoundBinaryTag(compoundBinaryTag, fileOutputStream)
     }
 
-    fun writeCompoundBinaryTag(compoundBinaryTag: CompoundBinaryTag, outputStream: OutputStream?) {
+    fun writeCompoundBinaryTag(compoundBinaryTag: CompoundBinaryTag, outputStream: OutputStream) {
         try {
             DataOutputStream(outputStream).use { dataOutputStream ->
                 val bytes = "".toByteArray(StandardCharsets.UTF_8)
@@ -72,7 +71,7 @@ class BinaryTagDriver {
         }
     }
 
-    fun readCompoundBinaryTagOrDefault(file: File?, supplier: Supplier<CompoundBinaryTag>): CompoundBinaryTag {
+    fun readCompoundBinaryTagOrDefault(file: File, supplier: Supplier<CompoundBinaryTag>): CompoundBinaryTag {
         return try {
             readCompoundBinaryTag(file)
         } catch (e: Exception) {
@@ -103,7 +102,7 @@ class BinaryTagDriver {
     fun readCompoundBinaryTag(inputStream: InputStream): CompoundBinaryTag {
         try {
             DataInputStream(inputStream).use { dataInputStream ->
-                val type: BinaryTagTypeKey = BinaryTagType.getTagTypeById(dataInputStream.readByte())
+                val type: BinaryTagKey = BinaryTagType.getTagTypeById(dataInputStream.readByte())
                 if (type != BinaryTagType.END) {
                     val length = dataInputStream.readShort()
                     val bytes = ByteArray(length.toInt())
@@ -142,13 +141,5 @@ class BinaryTagDriver {
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
-    }
-
-    fun registerDynamicMarshal(binaryTagDynamicMarshal: BinaryTagDynamicMarshal) {
-        binaryTagDynamicMarshalByType[binaryTagDynamicMarshal.javaClass] = binaryTagDynamicMarshal
-    }
-
-    fun <T : BinaryTagDynamicMarshal?> getDynamicMarshal(type: Class<T>): T {
-        return type.cast(binaryTagDynamicMarshalByType[type])
     }
 }
