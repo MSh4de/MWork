@@ -5,9 +5,9 @@ import eu.mshade.mwork.binarytag.*
 import java.util.*
 import java.util.function.Function
 
-open class CompoundBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.COMPOUND, private val binaryTagMap: MutableMap<String, BinaryTag<*>> = mutableMapOf()) :
+open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND, private val binaryTagMap: MutableMap<String, BinaryTag<*>> = mutableMapOf()) :
     BinaryTag<MutableMap<String, BinaryTag<*>>>(
-        binaryTagTypeKey, binaryTagMap
+        binaryTagKey, binaryTagMap
     ), PrettyString {
 
     constructor() : this(BinaryTagType.COMPOUND, mutableMapOf())
@@ -51,7 +51,7 @@ open class CompoundBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.
     }
 
     fun putInt(key: String, value: Int): CompoundBinaryTag {
-        putBinaryTag(key, IntegerBinaryTag(value))
+        putBinaryTag(key, IntBinaryTag(value))
         return this
     }
 
@@ -96,7 +96,7 @@ open class CompoundBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.
     }
 
     fun putIntArray(key: String, value: IntArray): CompoundBinaryTag {
-        putBinaryTag(key, IntegerArrayBinaryTag(value))
+        putBinaryTag(key, IntArrayBinaryTag(value))
         return this
     }
 
@@ -160,11 +160,10 @@ open class CompoundBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.
 
     override fun toPrettyString(deep: Int): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append(" ".repeat(deep))
         stringBuilder.append("CompoundBinaryTag{").append(System.lineSeparator())
         for ((key, value) in binaryTagMap) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append(key).append(": ")
+            stringBuilder.append(key).append("(${value.getType().getName()})").append(": ")
             if (value is PrettyString) {
                 stringBuilder.append((value as PrettyString).toPrettyString(deep + 1))
             } else {
@@ -179,6 +178,6 @@ open class CompoundBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.
 
 
     companion object {
-        val EMPTY = CompoundBinaryTag()
+        @JvmField val EMPTY = CompoundBinaryTag()
     }
 }
