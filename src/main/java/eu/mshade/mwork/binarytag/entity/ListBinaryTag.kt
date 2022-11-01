@@ -3,14 +3,14 @@ package eu.mshade.mwork.binarytag.entity
 import eu.mshade.mwork.PrettyString
 import eu.mshade.mwork.binarytag.BinaryTag
 import eu.mshade.mwork.binarytag.BinaryTagType
-import eu.mshade.mwork.binarytag.BinaryTagTypeKey
+import eu.mshade.mwork.binarytag.BinaryTagKey
 
-open class ListBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.LIST, val elementType: BinaryTagTypeKey, list: MutableList<BinaryTag<*>> = mutableListOf()) :
-    BinaryTag<MutableList<BinaryTag<*>>>(binaryTagTypeKey, list), PrettyString {
+open class ListBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LIST, val elementType: BinaryTagKey, list: MutableList<BinaryTag<*>> = mutableListOf()) :
+    BinaryTag<MutableList<BinaryTag<*>>>(binaryTagKey, list), PrettyString {
 
 
-    constructor(elementType: BinaryTagTypeKey) : this(BinaryTagType.LIST, elementType, mutableListOf())
-    constructor(binaryTagTypeKey: BinaryTagTypeKey, elementType: BinaryTagTypeKey) : this(binaryTagTypeKey, elementType, mutableListOf())
+    constructor(elementType: BinaryTagKey) : this(BinaryTagType.LIST, elementType, mutableListOf())
+    constructor(binaryTagKey: BinaryTagKey, elementType: BinaryTagKey) : this(binaryTagKey, elementType, mutableListOf())
 
 
     fun add(element: BinaryTag<*>): ListBinaryTag {
@@ -42,20 +42,25 @@ open class ListBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.LIST
 
     override fun toPrettyString(deep: Int): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append(" ".repeat(deep))
-        stringBuilder.append("ListBinaryTag(elementType=$elementType, value=[")
+        stringBuilder.append("ListBinaryTag(elementType=${elementType.getName()}){")
         stringBuilder.append(System.lineSeparator())
-        this.getValue().forEach {
+        this.getValue().take(5).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
+            stringBuilder.append("-").append(' ')
             if (it is PrettyString) {
-                stringBuilder.append(it.toPrettyString(deep + 1))
+                stringBuilder.append(it.toPrettyString(deep + 3))
             } else {
-                stringBuilder.append(it.toString())
+                stringBuilder.append(it.getValue())
             }
             stringBuilder.append(System.lineSeparator())
         }
+        if (this.getValue().size > 5) {
+            stringBuilder.append(" ".repeat(deep + 1))
+            stringBuilder.append("+ ${this.getValue().size - 5} more")
+            stringBuilder.append(System.lineSeparator())
+        }
         stringBuilder.append(" ".repeat(deep))
-        stringBuilder.append("])")
+        stringBuilder.append("}")
         return stringBuilder.toString()
     }
 
