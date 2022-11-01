@@ -140,7 +140,7 @@ class ListBinaryTagBuffer : BinaryTagBuffer {
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
-        val tagType: BinaryTagTypeKey = BinaryTagType.getTagTypeById(inputStream.readByte())
+        val tagType: BinaryTagKey = BinaryTagType.getTagTypeById(inputStream.readByte())
         val listBinaryTag = ListBinaryTag(tagType)
         val binaryTagBuffer = binaryTagDriver.getBufferByType(tagType)
         val length = inputStream.readInt()
@@ -166,7 +166,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): CompoundBinaryTag {
         val compoundBinaryTag = CompoundBinaryTag()
-        var tagTypeById: BinaryTagTypeKey
+        var tagTypeById: BinaryTagKey
         do {
             val b = inputStream.readByte()
             tagTypeById = BinaryTagType.getTagTypeById(b)
