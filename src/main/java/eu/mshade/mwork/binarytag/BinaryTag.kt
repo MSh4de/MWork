@@ -4,9 +4,9 @@ import eu.mshade.mwork.PrettyString
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag
 
-abstract class BinaryTag<T>(private val type: BinaryTagTypeKey, private val value: T) {
+abstract class BinaryTag<T>(private val type: BinaryTagKey, private val value: T) {
 
-    open fun getType(): BinaryTagTypeKey {
+    open fun getType(): BinaryTagKey {
         return type
     }
 
@@ -15,7 +15,7 @@ abstract class BinaryTag<T>(private val type: BinaryTagTypeKey, private val valu
     }
 
     override fun toString(): String {
-        return "BinaryTag(type=$type, value=$value)"
+        return "BinaryTag(type=${type.getName()}, value=$value)"
     }
 
 }
@@ -32,7 +32,7 @@ class ByteBinaryTag(value: Byte) : BinaryTag<Byte>(BinaryTagType.BYTE, value)
 
 class ShortBinaryTag(value: Short) : BinaryTag<Short>(BinaryTagType.SHORT, value)
 
-class IntegerBinaryTag(value: Int) : BinaryTag<Int>(BinaryTagType.INTEGER, value)
+class IntBinaryTag(value: Int) : BinaryTag<Int>(BinaryTagType.INT, value)
 
 class LongBinaryTag(value: Long) : BinaryTag<Long>(BinaryTagType.LONG, value)
 
@@ -40,8 +40,8 @@ class FloatBinaryTag(value: Float) : BinaryTag<Float>(BinaryTagType.FLOAT, value
 
 class DoubleBinaryTag(value: Double) : BinaryTag<Double>(BinaryTagType.DOUBLE, value)
 
-open class ByteArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.BYTE_ARRAY, value: ByteArray) :
-    BinaryTag<ByteArray>(binaryTagTypeKey, value), PrettyString {
+open class ByteArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.BYTE_ARRAY, value: ByteArray) :
+    BinaryTag<ByteArray>(binaryTagKey, value), PrettyString {
 
     constructor(value: ByteArray) : this(BinaryTagType.BYTE_ARRAY, value)
 
@@ -53,12 +53,13 @@ open class ByteArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType
         stringBuilder.append(System.lineSeparator())
         getValue().take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
+            stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
         if (getValue().size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("...")
+            stringBuilder.append("+ ${getValue().size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -68,17 +69,17 @@ open class ByteArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType
     }
 
     override fun toString(): String {
-        return "ByteArrayBinaryTag(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${getValue().contentToString()})"
     }
 
 }
 
 class StringBinaryTag(value: String) : BinaryTag<String>(BinaryTagType.STRING, value)
 
-open class IntegerArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.INTEGER_ARRAY, value: IntArray) :
-    BinaryTag<IntArray>(binaryTagTypeKey, value), PrettyString {
+open class IntArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.INT_ARRAY, value: IntArray) :
+    BinaryTag<IntArray>(binaryTagKey, value), PrettyString {
 
-    constructor(value: IntArray) : this(BinaryTagType.INTEGER_ARRAY, value)
+    constructor(value: IntArray) : this(BinaryTagType.INT_ARRAY, value)
 
     override fun toPrettyString(deep: Int): String {
         val stringBuilder = StringBuilder()
@@ -88,12 +89,13 @@ open class IntegerArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagT
         stringBuilder.append(System.lineSeparator())
         getValue().take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
+            stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
         if (getValue().size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("...")
+            stringBuilder.append("+ ${getValue().size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -102,14 +104,15 @@ open class IntegerArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagT
         return stringBuilder.toString()
     }
 
+
     override fun toString(): String {
-        return "IntegerArrayBinaryTag(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${getValue().contentToString()})"
     }
 
 }
 
-open class LongArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType.LONG_ARRAY, value: LongArray) :
-    BinaryTag<LongArray>(binaryTagTypeKey, value), PrettyString {
+open class LongArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LONG_ARRAY, value: LongArray) :
+    BinaryTag<LongArray>(binaryTagKey, value), PrettyString {
 
     constructor(value: LongArray) : this(BinaryTagType.LONG_ARRAY, value)
 
@@ -121,12 +124,13 @@ open class LongArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType
         stringBuilder.append(System.lineSeparator())
         getValue().take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
+            stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
         if (getValue().size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("...")
+            stringBuilder.append("+ ${getValue().size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -135,8 +139,9 @@ open class LongArrayBinaryTag(binaryTagTypeKey: BinaryTagTypeKey = BinaryTagType
         return stringBuilder.toString()
     }
 
+
     override fun toString(): String {
-        return "LongArrayBinaryTag(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${getValue().contentToString()})"
     }
 
 }
@@ -145,28 +150,34 @@ class BooleanBinaryTag(value: Boolean) : BinaryTag<Boolean>(BinaryTagType.BOOLEA
 
 class ZstdByteArrayBinaryTag(value: ByteArray) : ByteArrayBinaryTag(BinaryTagType.ZSTD_BYTE_ARRAY, value)
 
-class ZstdListBinaryTag(elementBinaryTagTypeKey: BinaryTagTypeKey, value: MutableList<BinaryTag<*>> = mutableListOf()) :
-    ListBinaryTag(BinaryTagType.ZSTD_LIST, elementBinaryTagTypeKey, value) {
+class ZstdListBinaryTag(elementBinaryTagKey: BinaryTagKey, value: MutableList<BinaryTag<*>> = mutableListOf()) :
+    ListBinaryTag(BinaryTagType.ZSTD_LIST, elementBinaryTagKey, value) {
 
-        constructor(elementBinaryTagTypeKey: BinaryTagTypeKey) : this(elementBinaryTagTypeKey, mutableListOf())
-    }
+    constructor(elementBinaryTagKey: BinaryTagKey) : this(elementBinaryTagKey, mutableListOf())
+}
 
 class ZstdCompoundBinaryTag(binaryTagMap: MutableMap<String, BinaryTag<*>> = mutableMapOf()) :
     CompoundBinaryTag(BinaryTagType.ZSTD_COMPOUND, binaryTagMap)
 
-class ZstdIntegerArrayBinaryTag(value: IntArray) : IntegerArrayBinaryTag(BinaryTagType.ZSTD_INTEGER_ARRAY, value)
+class ZstdIntArrayBinaryTag(value: IntArray) : IntArrayBinaryTag(BinaryTagType.ZSTD_INT_ARRAY, value)
 
 class ZstdLongArrayBinaryTag(value: LongArray) : LongArrayBinaryTag(BinaryTagType.ZSTD_LONG_ARRAY, value)
 
 class DeflateByteArrayBinaryTag(value: ByteArray) : ByteArrayBinaryTag(BinaryTagType.DEFLATE_BYTE_ARRAY, value)
 
-class DeflateListBinaryTag(elementBinaryTagTypeKey: BinaryTagTypeKey, value: MutableList<BinaryTag<*>> = mutableListOf()) :
-    ListBinaryTag(BinaryTagType.DEFLATE_LIST, elementBinaryTagTypeKey, value)
+class DeflateListBinaryTag(
+    elementBinaryTagKey: BinaryTagKey,
+    value: MutableList<BinaryTag<*>> = mutableListOf()
+) :
+    ListBinaryTag(BinaryTagType.DEFLATE_LIST, elementBinaryTagKey, value) {
+
+    constructor(elementBinaryTagKey: BinaryTagKey) : this(elementBinaryTagKey, mutableListOf())
+}
 
 class DeflateCompoundBinaryTag(binaryTagMap: MutableMap<String, BinaryTag<*>> = mutableMapOf()) :
     CompoundBinaryTag(BinaryTagType.DEFLATE_COMPOUND, binaryTagMap)
 
-class DeflateIntegerArrayBinaryTag(value: IntArray) : IntegerArrayBinaryTag(BinaryTagType.DEFLATE_INTEGER_ARRAY, value)
+class DeflateIntArrayBinaryTag(value: IntArray) : IntArrayBinaryTag(BinaryTagType.DEFLATE_INT_ARRAY, value)
 
 class DeflateLongArrayBinaryTag(value: LongArray) : LongArrayBinaryTag(BinaryTagType.DEFLATE_LONG_ARRAY, value)
 
