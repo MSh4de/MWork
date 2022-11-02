@@ -127,10 +127,10 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         val compoundBinaryTag = binaryTagDriver.readCompoundBinaryTagOrDefault(file) { CompoundBinaryTag() }
         if (compoundBinaryTag.containsKey("carbonSection")) {
             val sectionIndices = compoundBinaryTag.getBinaryTag("carbonSection") as CompoundBinaryTag?
-            sectionIndices!!.getValue().forEach { (s: String?, binaryTag: BinaryTag<*>) ->
+            sectionIndices!!.value.forEach { (s: String, binaryTag: BinaryTag<*>) ->
                 val listBinaryTag = binaryTag as ListBinaryTag
                 val binaryTagSectionIndices: MutableList<CarbonSection> = ArrayList()
-                for (tag in listBinaryTag.getValue()) {
+                for (tag in listBinaryTag.value) {
                     val sectionIndex = tag as CompoundBinaryTag
                     val index = sectionIndex.getInt("index")
                     val start = sectionIndex.getInt("start")
@@ -143,7 +143,7 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         if (compoundBinaryTag.containsKey("freeCarbonSection")) {
             val freeSectionIndicesBinaryTag = compoundBinaryTag.getBinaryTag("freeCarbonSection") as ListBinaryTag?
             val freeSectionIndices: MutableList<CarbonSection> = ArrayList()
-            freeSectionIndicesBinaryTag!!.getValue().forEach(Consumer { binaryTag: BinaryTag<*> ->
+            freeSectionIndicesBinaryTag!!.value.forEach(Consumer { binaryTag: BinaryTag<*> ->
                 val sectionIndex = binaryTag as CompoundBinaryTag
                 val start = sectionIndex.getInt("start")
                 val end = sectionIndex.getInt("end")

@@ -60,10 +60,10 @@ class BinaryTagDriver {
         try {
             DataOutputStream(outputStream).use { dataOutputStream ->
                 val bytes = "".toByteArray(StandardCharsets.UTF_8)
-                dataOutputStream.writeByte(compoundBinaryTag.getType().getIdentifier())
+                dataOutputStream.writeByte(compoundBinaryTag.type.getIdentifier())
                 dataOutputStream.writeShort(bytes.size)
                 dataOutputStream.write(bytes)
-                binaryTagBufferByBinaryTagType[compoundBinaryTag.getType()]!!
+                binaryTagBufferByBinaryTagType[compoundBinaryTag.type]!!
                     .write(this, dataOutputStream, compoundBinaryTag)
             }
         } catch (e: IOException) {

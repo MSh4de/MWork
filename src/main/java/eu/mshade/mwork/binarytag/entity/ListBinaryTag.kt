@@ -14,49 +14,53 @@ open class ListBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LIST, val el
 
 
     fun add(element: BinaryTag<*>): ListBinaryTag {
-        getValue().add(element)
+        value.add(element)
         return this
     }
 
     fun remove(element: BinaryTag<*>): ListBinaryTag {
-        getValue().remove(element)
+        value.remove(element)
         return this
     }
 
     fun remove(index: Int): ListBinaryTag {
-        getValue().removeAt(index)
+        value.removeAt(index)
         return this
     }
 
     fun get(index: Int): BinaryTag<*> {
-        return getValue()[index]
+        return value[index]
     }
 
     fun contains(element: BinaryTag<*>): Boolean {
-        return getValue().contains(element)
+        return value.contains(element)
     }
 
     fun size(): Int {
-        return getValue().size
+        return value.size
+    }
+
+    fun isEmpty(): Boolean {
+        return value.isEmpty()
     }
 
     override fun toPrettyString(deep: Int): String {
         val stringBuilder = StringBuilder()
         stringBuilder.append("ListBinaryTag(elementType=${elementType.getName()}){")
         stringBuilder.append(System.lineSeparator())
-        this.getValue().take(5).forEach {
+        this.value.take(5).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append("-").append(' ')
             if (it is PrettyString) {
                 stringBuilder.append(it.toPrettyString(deep + 3))
             } else {
-                stringBuilder.append(it.getValue())
+                stringBuilder.append(it.value)
             }
             stringBuilder.append(System.lineSeparator())
         }
-        if (this.getValue().size > 5) {
+        if (this.value.size > 5) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("+ ${this.getValue().size - 5} more")
+            stringBuilder.append("+ ${this.value.size - 5} more")
             stringBuilder.append(System.lineSeparator())
         }
         stringBuilder.append(" ".repeat(deep))

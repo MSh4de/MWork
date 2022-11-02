@@ -23,7 +23,7 @@ class DeflateByteArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.BYTE_ARRAY)
         return DeflateByteArrayBinaryTag(readDeflate(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as ByteArray)
+        }.value as ByteArray)
     }
 
 }
@@ -40,8 +40,8 @@ class DeflateListBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LIST)
         val listBinaryTag = readDeflate(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as ListBinaryTag
-        return DeflateListBinaryTag(listBinaryTag.elementType, listBinaryTag.getValue())
+        }.value as ListBinaryTag
+        return DeflateListBinaryTag(listBinaryTag.elementType, listBinaryTag.value)
     }
 
 }
@@ -58,7 +58,7 @@ class DeflateCompoundBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.COMPOUND)
         val tagMap = readDeflate(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as MutableMap<String, BinaryTag<*>>
+        }.value as MutableMap<String, BinaryTag<*>>
         return DeflateCompoundBinaryTag(tagMap)
     }
 
@@ -76,7 +76,7 @@ class DeflateIntegerArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INT_ARRAY)
         return DeflateIntArrayBinaryTag(readDeflate(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as IntArray)
+        }.value as IntArray)
     }
 
 }
@@ -93,7 +93,7 @@ class DeflateLongArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LONG_ARRAY)
         return DeflateLongArrayBinaryTag(readDeflate(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as LongArray)
+        }.value as LongArray)
     }
 
 }

@@ -21,7 +21,7 @@ class ZstdByteArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.BYTE_ARRAY)
         return ZstdByteArrayBinaryTag(readZstd(inputStream){
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as ByteArray)
+        }.value as ByteArray)
     }
 }
 
@@ -39,7 +39,7 @@ class ZstdListBinaryTagBuffer : BinaryTagBuffer {
         val listBinaryTag = readZstd(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
         } as ListBinaryTag
-        return ZstdListBinaryTag(listBinaryTag.elementType, listBinaryTag.getValue())
+        return ZstdListBinaryTag(listBinaryTag.elementType, listBinaryTag.value)
     }
 
 }
@@ -58,7 +58,7 @@ class ZstdCompoundBinaryTagBuffer : BinaryTagBuffer {
         val tagMap = readZstd(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
         } as CompoundBinaryTag
-        return ZstdCompoundBinaryTag(tagMap.getValue())
+        return ZstdCompoundBinaryTag(tagMap.value)
     }
 
 }
@@ -76,7 +76,7 @@ class ZstdIntegerArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.INT_ARRAY)
         return ZstdIntArrayBinaryTag(readZstd(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as IntArray)
+        }.value as IntArray)
     }
 
 }
@@ -94,7 +94,7 @@ class ZstdLongArrayBinaryTagBuffer : BinaryTagBuffer {
         val bufferByType = binaryTagDriver.getBufferByType(BinaryTagType.LONG_ARRAY)
         return ZstdLongArrayBinaryTag(readZstd(inputStream) {
             bufferByType!!.read(binaryTagDriver, it)
-        }.getValue() as LongArray)
+        }.value as LongArray)
     }
 
 }

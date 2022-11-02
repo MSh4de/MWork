@@ -23,7 +23,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun addCompound(compoundBinaryTag: CompoundBinaryTag): CompoundBinaryTag {
-        binaryTagMap.putAll(compoundBinaryTag.getValue())
+        binaryTagMap.putAll(compoundBinaryTag.value)
         return this
     }
 
@@ -38,7 +38,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getByte(key: String): Byte {
-        return getBinaryTag(key)?.getValue() as Byte
+        return getBinaryTag(key)?.value as Byte
     }
 
     fun putShort(key: String, value: Short): CompoundBinaryTag {
@@ -47,7 +47,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getShort(key: String): Short {
-        return getBinaryTag(key)?.getValue() as Short
+        return getBinaryTag(key)?.value as Short
     }
 
     fun putInt(key: String, value: Int): CompoundBinaryTag {
@@ -56,7 +56,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getInt(key: String): Int {
-        return getBinaryTag(key)?.getValue() as Int
+        return getBinaryTag(key)?.value as Int
     }
 
     fun putLong(key: String, value: Long): CompoundBinaryTag {
@@ -65,7 +65,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getLong(key: String): Long {
-        return getBinaryTag(key)?.getValue() as Long
+        return getBinaryTag(key)?.value as Long
     }
 
     fun putDouble(key: String, value: Double): CompoundBinaryTag {
@@ -74,7 +74,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getDouble(key: String): Double {
-        return getBinaryTag(key)?.getValue() as Double
+        return getBinaryTag(key)?.value as Double
     }
 
     fun putByteArray(key: String, value: ByteArray): CompoundBinaryTag {
@@ -83,7 +83,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getByteArray(key: String): ByteArray {
-        return getBinaryTag(key)?.getValue() as ByteArray
+        return getBinaryTag(key)?.value as ByteArray
     }
 
     fun putString(key: String, value: String): CompoundBinaryTag {
@@ -92,7 +92,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getString(key: String): String {
-        return getBinaryTag(key)?.getValue() as String
+        return getBinaryTag(key)?.value as String
     }
 
     fun putIntArray(key: String, value: IntArray): CompoundBinaryTag {
@@ -101,7 +101,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getIntArray(key: String): IntArray {
-        return getBinaryTag(key)?.getValue() as IntArray
+        return getBinaryTag(key)?.value as IntArray
     }
 
     fun putLongArray(key: String, value: LongArray): CompoundBinaryTag {
@@ -110,7 +110,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getLongArray(key: String): LongArray {
-        return getBinaryTag(key)?.getValue() as LongArray
+        return getBinaryTag(key)?.value as LongArray
     }
 
     fun putBoolean(key: String, value: Boolean): CompoundBinaryTag {
@@ -119,7 +119,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getBoolean(key: String): Boolean {
-        return getBinaryTag(key)?.getValue() as Boolean
+        return getBinaryTag(key)?.value as Boolean
     }
 
     fun putFloat(key: String, value: Float): CompoundBinaryTag {
@@ -128,7 +128,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getFloat(key: String): Float {
-        return getBinaryTag(key)?.getValue() as Float
+        return getBinaryTag(key)?.value as Float
     }
 
     fun containsKey(key: String?): Boolean {
@@ -163,11 +163,11 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
         stringBuilder.append("CompoundBinaryTag{").append(System.lineSeparator())
         for ((key, value) in binaryTagMap) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append(key).append("(${value.getType().getName()})").append(": ")
+            stringBuilder.append(key).append("(${value.type.getName()})").append(": ")
             if (value is PrettyString) {
                 stringBuilder.append((value as PrettyString).toPrettyString(deep + 1))
             } else {
-                stringBuilder.append(value.getValue())
+                stringBuilder.append(value.value)
             }
             stringBuilder.append(System.lineSeparator())
         }

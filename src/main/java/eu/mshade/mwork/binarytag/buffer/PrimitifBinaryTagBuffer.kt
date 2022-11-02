@@ -24,7 +24,7 @@ class EndBinaryTagBuffer : BinaryTagBuffer {
 class ByteBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeByte(binaryTag.getValue() as Int)
+        outputStream.writeByte(binaryTag.value as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -36,7 +36,7 @@ class ByteBinaryTagBuffer : BinaryTagBuffer {
 class ShortBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeShort(binaryTag.getValue() as Int)
+        outputStream.writeShort(binaryTag.value as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -48,7 +48,7 @@ class ShortBinaryTagBuffer : BinaryTagBuffer {
 class IntBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeInt(binaryTag.getValue() as Int)
+        outputStream.writeInt(binaryTag.value as Int)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -60,7 +60,7 @@ class IntBinaryTagBuffer : BinaryTagBuffer {
 class LongBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeLong(binaryTag.getValue() as Long)
+        outputStream.writeLong(binaryTag.value as Long)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -72,7 +72,7 @@ class LongBinaryTagBuffer : BinaryTagBuffer {
 class FloatBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeFloat(binaryTag.getValue() as Float)
+        outputStream.writeFloat(binaryTag.value as Float)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -83,7 +83,7 @@ class FloatBinaryTagBuffer : BinaryTagBuffer {
 class DoubleBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeDouble(binaryTag.getValue() as Double)
+        outputStream.writeDouble(binaryTag.value as Double)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
@@ -95,7 +95,7 @@ class DoubleBinaryTagBuffer : BinaryTagBuffer {
 class ByteArrayBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val byteArray = binaryTag.getValue() as ByteArray
+        val byteArray = binaryTag.value as ByteArray
         outputStream.writeInt(byteArray.size)
         outputStream.write(byteArray)
     }
@@ -112,7 +112,7 @@ class ByteArrayBinaryTagBuffer : BinaryTagBuffer {
 class StringBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val string = binaryTag.getValue() as String
+        val string = binaryTag.value as String
         val bytes: ByteArray = string.toByteArray(StandardCharsets.UTF_8)
         outputStream.writeShort(bytes.size)
         outputStream.write(bytes)
@@ -134,13 +134,13 @@ class ListBinaryTagBuffer : BinaryTagBuffer {
         outputStream.writeByte(listBinaryTag.elementType.getIdentifier())
         outputStream.writeInt(listBinaryTag.size())
         val bufferByType = binaryTagDriver.getBufferByType(listBinaryTag.elementType)
-        listBinaryTag.getValue().forEach{
+        listBinaryTag.value.forEach{
             bufferByType!!.write(binaryTagDriver, outputStream, it)
         }
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
-        val tagType: BinaryTagKey = BinaryTagType.getTagTypeById(inputStream.readByte())
+        val tagType: BinaryTagKey = BinaryTagType.getTagTypeById(inputStream.readByte())!!
         val listBinaryTag = ListBinaryTag(tagType)
         val binaryTagBuffer = binaryTagDriver.getBufferByType(tagType)
         val length = inputStream.readInt()
@@ -156,17 +156,17 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
         val compoundBinaryTag = binaryTag as CompoundBinaryTag
-        for (entry in compoundBinaryTag.getValue()) {
-            outputStream.writeByte(entry.value.getType().getIdentifier())
+        for (entry in compoundBinaryTag.value) {
+            outputStream.writeByte(entry.value.type.getIdentifier())
             outputStream.writeUTF(entry.key)
-            binaryTagDriver.getBufferByType(entry.value.getType())!!.write(binaryTagDriver, outputStream, entry.value)
+            binaryTagDriver.getBufferByType(entry.value.type)!!.write(binaryTagDriver, outputStream, entry.value)
         }
         outputStream.write(0)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): CompoundBinaryTag {
         val compoundBinaryTag = CompoundBinaryTag()
-        var tagTypeById: BinaryTagKey
+        var tagTypeById: BinaryTagKey?
         do {
             val b = inputStream.readByte()
             tagTypeById = BinaryTagType.getTagTypeById(b)
@@ -187,7 +187,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
 class IntegerArrayBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val intArray = binaryTag!!.getValue() as IntArray
+        val intArray = binaryTag.value as IntArray
         outputStream.writeInt(intArray.size)
         for (i in intArray.indices) {
             outputStream.writeInt(intArray[i])
@@ -208,7 +208,7 @@ class IntegerArrayBinaryTagBuffer : BinaryTagBuffer {
 class LongArrayBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        val longArray = binaryTag!!.getValue() as LongArray
+        val longArray = binaryTag!!.value as LongArray
         outputStream.writeInt(longArray.size)
         for (i in longArray.indices) {
             outputStream.writeLong(longArray[i])
@@ -229,7 +229,7 @@ class LongArrayBinaryTagBuffer : BinaryTagBuffer {
 class BooleanBinaryTagBuffer : BinaryTagBuffer {
 
     override fun write(binaryTagDriver: BinaryTagDriver, outputStream: DataOutputStream, binaryTag: BinaryTag<*>) {
-        outputStream.writeBoolean(binaryTag!!.getValue() as Boolean)
+        outputStream.writeBoolean(binaryTag!!.value as Boolean)
     }
 
     override fun read(binaryTagDriver: BinaryTagDriver, inputStream: DataInputStream): BinaryTag<*> {
