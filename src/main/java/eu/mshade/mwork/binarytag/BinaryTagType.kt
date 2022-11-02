@@ -45,7 +45,7 @@ object BinaryTagType {
     }
 
     fun getTagTypeById(id: Int): BinaryTagKey {
-        return binaryTagTypeById[id] ?: throw IllegalArgumentException("Unknown BinaryTagTypeKey with id $id")
+        return binaryTagTypeById[id] ?: throw IllegalArgumentException("Unknown tag type id $id")
     }
 
     fun getTagTypeById(id: Byte): BinaryTagKey = getTagTypeById(id.toInt())
