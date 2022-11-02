@@ -1,10 +1,9 @@
 package eu.mshade.test;
 
-import eu.mshade.mwork.binarytag.BinaryTagType;
 import eu.mshade.mwork.binarytag.BinaryTagDriver;
-import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
+import eu.mshade.mwork.binarytag.BinaryTagType;
+import eu.mshade.mwork.binarytag.StringBinaryTag;
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag;
-import eu.mshade.mwork.binarytag.entity.StringBinaryTag;
 
 import java.io.*;
 import java.lang.reflect.Proxy;
