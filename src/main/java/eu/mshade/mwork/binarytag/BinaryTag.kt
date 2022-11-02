@@ -4,15 +4,7 @@ import eu.mshade.mwork.PrettyString
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag
 import eu.mshade.mwork.binarytag.entity.ListBinaryTag
 
-abstract class BinaryTag<T>(private val type: BinaryTagKey, private val value: T) {
-
-    open fun getType(): BinaryTagKey {
-        return type
-    }
-
-    fun getValue(): T {
-        return value
-    }
+abstract class BinaryTag<T>(val type: BinaryTagKey, val value: T) {
 
     override fun toString(): String {
         return "BinaryTag(type=${type.getName()}, value=$value)"
@@ -28,7 +20,11 @@ class EndBinaryTag : BinaryTag<Int>(BinaryTagType.END, 0) {
     }
 }
 
-class ByteBinaryTag(value: Byte) : BinaryTag<Byte>(BinaryTagType.BYTE, value)
+class ByteBinaryTag(value: Byte) : BinaryTag<Byte>(BinaryTagType.BYTE, value){
+
+    constructor(value: Int) : this(value.toByte())
+    constructor(value: Boolean) : this(if (value) 1 else 0)
+}
 
 class ShortBinaryTag(value: Short) : BinaryTag<Short>(BinaryTagType.SHORT, value)
 
@@ -51,15 +47,15 @@ open class ByteArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.BYTE_AR
         stringBuilder.append(this::class.simpleName)
         stringBuilder.append("{")
         stringBuilder.append(System.lineSeparator())
-        getValue().take(10).forEach {
+        value.take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
-        if (getValue().size > 10) {
+        if (value.size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("+ ${getValue().size - 10} more")
+            stringBuilder.append("+ ${value.size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -69,7 +65,7 @@ open class ByteArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.BYTE_AR
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName}(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${value.contentToString()})"
     }
 
 }
@@ -87,15 +83,15 @@ open class IntArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.INT_ARRA
         stringBuilder.append(this::class.simpleName)
         stringBuilder.append("{")
         stringBuilder.append(System.lineSeparator())
-        getValue().take(10).forEach {
+        value.take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
-        if (getValue().size > 10) {
+        if (value.size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("+ ${getValue().size - 10} more")
+            stringBuilder.append("+ ${value.size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -106,7 +102,7 @@ open class IntArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.INT_ARRA
 
 
     override fun toString(): String {
-        return "${this::class.simpleName}(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${value.contentToString()})"
     }
 
 }
@@ -122,15 +118,15 @@ open class LongArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LONG_AR
         stringBuilder.append(this::class.simpleName)
         stringBuilder.append("{")
         stringBuilder.append(System.lineSeparator())
-        getValue().take(10).forEach {
+        value.take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append("-").append(' ')
             stringBuilder.append(it)
             stringBuilder.append(System.lineSeparator())
         }
-        if (getValue().size > 10) {
+        if (value.size > 10) {
             stringBuilder.append(" ".repeat(deep + 1))
-            stringBuilder.append("+ ${getValue().size - 10} more")
+            stringBuilder.append("+ ${value.size - 10} more")
             stringBuilder.append(System.lineSeparator())
         }
 
@@ -141,7 +137,7 @@ open class LongArrayBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LONG_AR
 
 
     override fun toString(): String {
-        return "${this::class.simpleName}(value=${getValue().contentToString()})"
+        return "${this::class.simpleName}(value=${value.contentToString()})"
     }
 
 }
