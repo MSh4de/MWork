@@ -10,6 +10,7 @@ open class ListBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LIST, val el
 
 
     constructor(elementType: BinaryTagKey) : this(BinaryTagType.LIST, elementType, mutableListOf())
+    constructor(elementType: BinaryTagKey, list: MutableList<BinaryTag<*>>) : this(BinaryTagType.LIST, elementType, list)
     constructor(binaryTagKey: BinaryTagKey, elementType: BinaryTagKey) : this(binaryTagKey, elementType, mutableListOf())
 
 
