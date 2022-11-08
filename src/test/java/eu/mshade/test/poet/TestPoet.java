@@ -1,8 +1,7 @@
 package eu.mshade.test.poet;
 
 import eu.mshade.mwork.binarytag.*;
-import eu.mshade.mwork.binarytag.carbon.CarbonBinaryTag;
-import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag;
+import eu.mshade.mwork.binarytag.segment.SegmentBinaryTag;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +23,12 @@ public class TestPoet {
 
          */
 
-        CarbonBinaryTag carbonBinaryTag = new CarbonBinaryTag(poetIndex, poetData, binaryTagDriver);
+        SegmentBinaryTag segmentBinaryTag = new SegmentBinaryTag(poetIndex, poetData, binaryTagDriver);
 
         //System.out.println(binaryTagPoet.getCompoundSectionIndex());
 
 //        System.out.println(binaryTagPoet.readCompoundBinaryTag("cc").toPrettyString());
-        System.out.println(carbonBinaryTag.readCompoundBinaryTag("aa").toPrettyString());
+        System.out.println(segmentBinaryTag.readCompoundBinaryTag("aa").toPrettyString());
 
 
 
@@ -45,7 +44,7 @@ public class TestPoet {
         binaryTagPoet.writeCompoundSectionIndex();*/
 
 
-        System.out.println(carbonBinaryTag.getCompoundSectionIndex());
+        System.out.println(segmentBinaryTag.getCompoundSectionIndex());
 
 
 
