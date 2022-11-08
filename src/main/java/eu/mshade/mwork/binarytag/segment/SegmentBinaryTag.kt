@@ -1,4 +1,4 @@
-package eu.mshade.mwork.binarytag.carbon
+package eu.mshade.mwork.binarytag.segment
 
 import eu.mshade.mwork.binarytag.*
 import eu.mshade.mwork.binarytag.entity.CompoundBinaryTag
@@ -11,11 +11,12 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
 import java.nio.file.StandardOpenOption
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutionException
 import java.util.function.Consumer
 
-class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val binaryTagDriver: BinaryTagDriver) {
-    val compoundSectionIndex: CarbonSectionBucket
+class SegmentBinaryTag(private val indexFile: File, dataFile: File, private val binaryTagDriver: BinaryTagDriver) {
+    val compoundSectionIndex: SegmentSectionBucket
     private var asynchronousFileChannel: AsynchronousFileChannel? = null
 
     init {
@@ -37,9 +38,9 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         val binaryTagIndices = compoundSectionIndex.getSectionIndices(key) ?: return null
 
         // change by array
-        val sectionIndices = arrayOfNulls<CarbonSection>(binaryTagIndices.size)
-        binaryTagIndices.forEach(Consumer { carbonSection: CarbonSection ->
-            sectionIndices[carbonSection.index] = carbonSection
+        val sectionIndices = arrayOfNulls<SegmentSection>(binaryTagIndices.size)
+        binaryTagIndices.forEach(Consumer { segmentSection: SegmentSection ->
+            sectionIndices[segmentSection.index] = segmentSection
         })
         val payload = ByteBuffer.allocate(getSizeOfSectionIndex(binaryTagIndices))
         for (i in binaryTagIndices.indices) {
@@ -71,8 +72,8 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         } else {
             if (compoundSectionIndex.getFreeCarbonSection().isEmpty()) {
                 val length = asynchronousFileChannel!!.size()
-                val carbonSection = CarbonSection(0, length.toInt(), (length + payload.size).toInt())
-                sectionIndices.add(carbonSection)
+                val segmentSection = SegmentSection(0, length.toInt(), (length + payload.size).toInt())
+                sectionIndices.add(segmentSection)
                 asynchronousFileChannel!!.write(ByteBuffer.wrap(payload), length).get()
             } else {
                 writeInFreeSectionIndices(payload, sectionIndices)
@@ -82,7 +83,7 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
     }
 
     @Throws(IOException::class, InterruptedException::class, ExecutionException::class)
-    private fun writeInFreeSectionIndices(payload: ByteArray, sectionIndices: MutableList<CarbonSection>?) {
+    private fun writeInFreeSectionIndices(payload: ByteArray, sectionIndices: MutableList<SegmentSection>?) {
         var index = 0
         var binaryTagIndex = 0
         while (index != payload.size) {
@@ -93,17 +94,17 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
                 var size = carbonSection.size
                 if (carbonSection.size > i) {
                     size = i
-                    val freeCarbonSection = CarbonSection(-1, carbonSection.start + size, carbonSection.end)
-                    compoundSectionIndex.addFreeSectionIndices(freeCarbonSection)
+                    val freeSegmentSection = SegmentSection(-1, carbonSection.start + size, carbonSection.end)
+                    compoundSectionIndex.addFreeSectionIndices(freeSegmentSection)
                 }
-                carbonSection = CarbonSection(binaryTagIndex++, carbonSection.start, carbonSection.start + size)
+                carbonSection = SegmentSection(binaryTagIndex++, carbonSection.start, carbonSection.start + size)
                 asynchronousFileChannel!!.write(ByteBuffer.wrap(payload, index, size), carbonSection.start.toLong())
                     .get()
                 index += size
             } else {
                 val length = asynchronousFileChannel!!.size()
                 carbonSection =
-                    CarbonSection(binaryTagIndex++, length.toInt(), (length + (payload.size - index)).toInt())
+                    SegmentSection(binaryTagIndex++, length.toInt(), (length + (payload.size - index)).toInt())
                 asynchronousFileChannel!!.write(
                     ByteBuffer.wrap(payload, index, carbonSection.size),
                     carbonSection.start.toLong()
@@ -114,7 +115,7 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         }
     }
 
-    private fun getSizeOfSectionIndex(sectionIndices: Collection<CarbonSection>): Int {
+    private fun getSizeOfSectionIndex(sectionIndices: Collection<SegmentSection>): Int {
         var size = 0
         for (carbonSection in sectionIndices) {
             size += carbonSection.size
@@ -122,48 +123,48 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
         return size
     }
 
-    private fun readCompoundSectionIndex(file: File): CarbonSectionBucket {
-        val carbonSectionBucket = CarbonSectionBucket()
+    private fun readCompoundSectionIndex(file: File): SegmentSectionBucket {
+        val segmentSectionBucket = SegmentSectionBucket()
         val compoundBinaryTag = binaryTagDriver.readCompoundBinaryTagOrDefault(file) { CompoundBinaryTag() }
         if (compoundBinaryTag.containsKey("carbonSection")) {
             val sectionIndices = compoundBinaryTag.getBinaryTag("carbonSection") as CompoundBinaryTag?
             sectionIndices!!.value.forEach { (s: String, binaryTag: BinaryTag<*>) ->
                 val listBinaryTag = binaryTag as ListBinaryTag
-                val binaryTagSectionIndices: MutableList<CarbonSection> = ArrayList()
+                val binaryTagSectionIndices: MutableList<SegmentSection> = ArrayList()
                 for (tag in listBinaryTag.value) {
                     val sectionIndex = tag as CompoundBinaryTag
                     val index = sectionIndex.getInt("index")
                     val start = sectionIndex.getInt("start")
                     val end = sectionIndex.getInt("end")
-                    binaryTagSectionIndices.add(CarbonSection(index, start, end))
+                    binaryTagSectionIndices.add(SegmentSection(index, start, end))
                 }
-                carbonSectionBucket.setSectionIndex(s, binaryTagSectionIndices)
+                segmentSectionBucket.setSectionIndex(s, binaryTagSectionIndices)
             }
         }
         if (compoundBinaryTag.containsKey("freeCarbonSection")) {
             val freeSectionIndicesBinaryTag = compoundBinaryTag.getBinaryTag("freeCarbonSection") as ListBinaryTag?
-            val freeSectionIndices: MutableList<CarbonSection> = ArrayList()
+            val freeSectionIndices = ConcurrentLinkedQueue<SegmentSection>()
             freeSectionIndicesBinaryTag!!.value.forEach(Consumer { binaryTag: BinaryTag<*> ->
                 val sectionIndex = binaryTag as CompoundBinaryTag
                 val start = sectionIndex.getInt("start")
                 val end = sectionIndex.getInt("end")
-                freeSectionIndices.add(CarbonSection(-1, start, end))
+                freeSectionIndices.add(SegmentSection(-1, start, end))
             })
-            carbonSectionBucket.setFreeSectionIndices(freeSectionIndices)
+            segmentSectionBucket.setFreeSectionIndices(freeSectionIndices)
         }
-        return carbonSectionBucket
+        return segmentSectionBucket
     }
 
     fun writeCompoundSectionIndex() {
         val compoundBinaryTag = CompoundBinaryTag()
         val compoundBinaryTagSectionIndices: CompoundBinaryTag = ZstdCompoundBinaryTag()
-        compoundSectionIndex.getSectionIndicesByName().forEach { (s: String?, sectionIndices: List<CarbonSection>) ->
+        compoundSectionIndex.getSectionIndicesByName().forEach { (s: String?, sectionIndices: List<SegmentSection>) ->
             val listBinaryTag: ListBinaryTag = ZstdListBinaryTag(BinaryTagType.COMPOUND)
-            sectionIndices.forEach(Consumer { carbonSection: CarbonSection ->
+            sectionIndices.forEach(Consumer { segmentSection: SegmentSection ->
                 val compoundBinaryTagSectionIndex = CompoundBinaryTag()
-                compoundBinaryTagSectionIndex.putInt("index", carbonSection.index)
-                compoundBinaryTagSectionIndex.putInt("start", carbonSection.start)
-                compoundBinaryTagSectionIndex.putInt("end", carbonSection.end)
+                compoundBinaryTagSectionIndex.putInt("index", segmentSection.index)
+                compoundBinaryTagSectionIndex.putInt("start", segmentSection.start)
+                compoundBinaryTagSectionIndex.putInt("end", segmentSection.end)
                 listBinaryTag.add(compoundBinaryTagSectionIndex)
             })
             compoundBinaryTagSectionIndices.putBinaryTag(s, listBinaryTag)
@@ -181,6 +182,6 @@ class CarbonBinaryTag(private val indexFile: File, dataFile: File, private val b
     }
 
     companion object {
-        private val LOGGER = LoggerFactory.getLogger(CarbonBinaryTag::class.java)
+        private val LOGGER = LoggerFactory.getLogger(SegmentBinaryTag::class.java)
     }
 }

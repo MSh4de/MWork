@@ -1,6 +1,6 @@
-package eu.mshade.mwork.binarytag.carbon
+package eu.mshade.mwork.binarytag.segment
 
-class CarbonSection(var index: Int, var start: Int, val end: Int) {
+class SegmentSection(var index: Int, var start: Int, val end: Int) {
 
     val size: Int
         get() = end - start
