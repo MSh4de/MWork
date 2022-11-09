@@ -82,9 +82,11 @@ public class Main {
 ```
 
 ### Segment Binary Tag
-The segment binary tag is a system that allows you to write several compound binary tags in the same file, 
-this particularity is that you don't need to rewrite everything when you want to save but only the compound you just wrote,
-thanks to an index the data are written in a scattered way in the whole file so that you don't have to leave any space and at the moment of the reading you reconstruct the data
+A **Segment Binary Tag** is a valuable system that provides you the capability of writing as much compound binary tags as you
+wish in the same file, without having to rewrite the whole file when your purpose is to modify only one of them.
+<hr>
+The Binary Tag will take advantage of the scattered data written in the file to reconstruct the data when it reads it. 
+This also prevent you from having to leave any space in the file.
 
 ```java
 import eu.mshade.mwork.binarytag.BinaryTagDriver;
@@ -109,5 +111,4 @@ public class Main {
     }
 }
 ```
-
-So it's not necessary to allocate a space for each object here everything is expandable 
+Therefore, you shall not allocate any space for each object where everything is expandable.
