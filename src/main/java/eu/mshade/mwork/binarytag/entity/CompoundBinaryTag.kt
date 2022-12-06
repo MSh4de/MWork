@@ -38,7 +38,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getByte(key: String): Byte {
-        return getBinaryTag(key)?.value as Byte
+        return getBinaryTag(key)?.value as? Byte ?: 0
     }
 
     fun putShort(key: String, value: Short): CompoundBinaryTag {
@@ -47,7 +47,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getShort(key: String): Short {
-        return getBinaryTag(key)?.value as Short
+        return getBinaryTag(key)?.value as? Short ?: 0
     }
 
     fun putInt(key: String, value: Int): CompoundBinaryTag {
@@ -56,7 +56,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getInt(key: String): Int {
-        return getBinaryTag(key)?.value as Int
+        return getBinaryTag(key)?.value as? Int ?: 0
     }
 
     fun putLong(key: String, value: Long): CompoundBinaryTag {
@@ -65,7 +65,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getLong(key: String): Long {
-        return getBinaryTag(key)?.value as Long
+        return getBinaryTag(key)?.value as? Long ?: 0
     }
 
     fun putDouble(key: String, value: Double): CompoundBinaryTag {
@@ -74,7 +74,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getDouble(key: String): Double {
-        return getBinaryTag(key)?.value as Double
+        return getBinaryTag(key)?.value as? Double ?: 0.0
     }
 
     fun putByteArray(key: String, value: ByteArray): CompoundBinaryTag {
@@ -83,7 +83,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getByteArray(key: String): ByteArray {
-        return getBinaryTag(key)?.value as ByteArray
+        return getBinaryTag(key)?.value as? ByteArray ?: ByteArray(0)
     }
 
     fun putString(key: String, value: String): CompoundBinaryTag {
@@ -91,8 +91,8 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
         return this
     }
 
-    fun getString(key: String): String {
-        return getBinaryTag(key)?.value as String
+    fun getString(key: String): String? {
+        return getBinaryTag(key)?.value as? String
     }
 
     fun putIntArray(key: String, value: IntArray): CompoundBinaryTag {
@@ -101,7 +101,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getIntArray(key: String): IntArray {
-        return getBinaryTag(key)?.value as IntArray
+        return getBinaryTag(key)?.value as? IntArray ?: IntArray(0)
     }
 
     fun putLongArray(key: String, value: LongArray): CompoundBinaryTag {
@@ -110,7 +110,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getLongArray(key: String): LongArray {
-        return getBinaryTag(key)?.value as LongArray
+        return getBinaryTag(key)?.value as? LongArray ?: LongArray(0)
     }
 
     fun putBoolean(key: String, value: Boolean): CompoundBinaryTag {
@@ -119,7 +119,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getBoolean(key: String): Boolean {
-        return getBinaryTag(key)?.value as Boolean
+        return getBinaryTag(key)?.value as? Boolean ?: false
     }
 
     fun putFloat(key: String, value: Float): CompoundBinaryTag {
@@ -128,7 +128,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
     }
 
     fun getFloat(key: String): Float {
-        return getBinaryTag(key)?.value as Float
+        return getBinaryTag(key)?.value as? Float ?: 0.0f
     }
 
     fun containsKey(key: String?): Boolean {
@@ -165,7 +165,7 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append(key).append("(${value.type.getName()})").append(": ")
             if (value is PrettyString) {
-                stringBuilder.append((value as PrettyString).toPrettyString(deep + 1))
+                stringBuilder.append(value.toPrettyString(deep + 1))
             } else {
                 stringBuilder.append(value.value)
             }
