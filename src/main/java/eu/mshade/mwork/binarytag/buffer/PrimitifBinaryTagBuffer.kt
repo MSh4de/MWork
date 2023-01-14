@@ -144,6 +144,7 @@ class ListBinaryTagBuffer : BinaryTagBuffer {
         val listBinaryTag = ListBinaryTag(tagType)
         val binaryTagBuffer = binaryTagDriver.getBufferByType(tagType)
         val length = inputStream.readInt()
+
         for (i in 0 until length) {
             listBinaryTag.add(binaryTagBuffer!!.read(binaryTagDriver, inputStream))
         }
@@ -177,6 +178,7 @@ class CompoundBinaryTagBuffer : BinaryTagBuffer {
                 val name = String(bytes, StandardCharsets.UTF_8)
                 compoundBinaryTag.putBinaryTag(name, binaryTagDriver.getBufferByType(tagTypeById)!!
                     .read(binaryTagDriver, inputStream))
+
             }
         } while (tagTypeById != BinaryTagType.END)
         return compoundBinaryTag

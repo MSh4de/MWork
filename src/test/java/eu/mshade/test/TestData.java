@@ -16,21 +16,25 @@ public class TestData {
     public static void main(String[] args) {
 
         BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
-        byte[] bytes = {    10, 0, 0,  13,   0,   4, 116, 101, 115, 116,
-                1, 1, 0,   5, 116, 101, 115, 116,  50,   2,
-                7, 0, 5, 116, 101, 115, 116,  51,   0,   0,
-                0, 6, 1,   2,   3,   4,   5,   6,   0 };
 
         CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
-        compoundBinaryTag.putIntArray("test", new int[]{-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
 
-        System.out.println(compoundBinaryTag.toPrettyString());
+        ListBinaryTag listBinaryTag = new ListBinaryTag(BinaryTagType.COMPOUND);
 
-        System.out.println(binaryTagDriver.readCompoundBinaryTag(new ByteArrayInputStream(bytes)).toPrettyString());
+        for (int i = 0; i < 5; i++) {
+            CompoundBinaryTag compoundBinaryTag1 = new CompoundBinaryTag();
+            compoundBinaryTag1.putBinaryTag("name", new StringBinaryTag("name" + i));
+            compoundBinaryTag1.putBinaryTag("age", new IntBinaryTag(ThreadLocalRandom.current().nextInt(0, 100)));
+            listBinaryTag.add(compoundBinaryTag1);
+        }
+
+        compoundBinaryTag.putBinaryTag("list", listBinaryTag);
 
 
-        File poetIndex = new File("poetIndex.dat");
-        System.out.println(binaryTagDriver.readCompoundBinaryTag(poetIndex).toPrettyString());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        binaryTagDriver.writeCompoundBinaryTag(compoundBinaryTag, byteArrayOutputStream);
+        System.out.println(Arrays.toString(byteArrayOutputStream.toByteArray()));
+
 
     }
 

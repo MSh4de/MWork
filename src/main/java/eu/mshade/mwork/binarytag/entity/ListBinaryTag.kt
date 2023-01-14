@@ -49,7 +49,7 @@ open class ListBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.LIST, val el
         val stringBuilder = StringBuilder()
         stringBuilder.append("ListBinaryTag(elementType=${elementType.getName()}){")
         stringBuilder.append(System.lineSeparator())
-        this.value.take(5).forEach {
+        this.value.take(10).forEach {
             stringBuilder.append(" ".repeat(deep + 1))
             stringBuilder.append("-").append(' ')
             if (it is PrettyString) {

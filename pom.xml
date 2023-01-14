@@ -10,7 +10,7 @@
     <name>MWork</name>
 
     <properties>
-        <kotlin.version>1.7.10</kotlin.version>
+        <kotlin.version>1.7.21</kotlin.version>
     </properties>
 
     <build>
@@ -112,6 +112,7 @@
             <artifactId>kotlinx-coroutines-core</artifactId>
             <version>1.6.4</version>
         </dependency>
+
     </dependencies>
 
 </project>
