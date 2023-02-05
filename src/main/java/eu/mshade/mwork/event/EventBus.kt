@@ -1,5 +1,6 @@
 package eu.mshade.mwork.event
 
+import eu.mshade.mwork.binarytag.entity.ListBinaryTag
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -49,10 +50,11 @@ class EventBus<T> {
             .filter {
                 hasMatch(
                     it.eventType,
-                    if(it.eventType.isInterface && event!!::class.java
-                            .interfaces.isNotEmpty())
-                     event!!::class.java.interfaces[0] else event!!::class.java
-                , it.eventFilter)
+                    if (it.eventType.isInterface && event!!::class.java
+                            .interfaces.isNotEmpty()
+                    )
+                        event!!::class.java.interfaces[0] else event!!::class.java, it.eventFilter
+                )
             }
             .forEach { it.eventListener.onEvent(event) }
         /*        eventContexts.stream()
@@ -92,6 +94,8 @@ class EventBus<T> {
     private fun hasMatch(from: Class<*>, to: Class<*>, eventFilter: EventFilter): Boolean {
         return if (eventFilter === EventFilter.ONLY) from == to else from.isAssignableFrom(to)
     }
+
+
 
     /**
      * A comparator to sort listeners by priority.

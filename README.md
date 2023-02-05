@@ -37,13 +37,13 @@ public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
+        eventBus.subscribe(Event.class, (event) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
         
         eventBus.publish(new HelloWorld());
     }
 }
 ```
-### Name Binary Tag
+### Binary Tag
 
 The name binary tag is a very lightweight format that allows you to store whatever you want.\
 In our little example we will store an Account object.
@@ -66,13 +66,49 @@ public class Account {
 ```
 
 ```java
-Account acount = new Account("_RealAlpha_", 17);
-DefaultBinaryTagBufferDriver defaultBinaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
+public class Main {
+    public static void main(String[] args) {
+        Account account = new Account("_RealAlpha_", 17);
+        BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
 
-CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
-compoundBinaryTag.putString("name", account.getName());
-compoundBinaryTag.putInt("age", account.getAge());
-compoundBinaryTag.putLong("time", account.getTime());
+        CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
+        compoundBinaryTag.putString("name", account.getName());
+        compoundBinaryTag.putInt("age", account.getAge());
+        compoundBinaryTag.putLong("time", account.getTime());
 
-defaultBinaryTagBufferDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
+        binaryTagDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
+    }
+}
 ```
+
+### Segment Binary Tag
+A **Segment Binary Tag** is a valuable system that provides you the capability of writing as much compound binary tags as you
+wish in the same file, without having to rewrite the whole file when your purpose is to modify only one of them.
+<hr>
+The Binary Tag will take advantage of the scattered data written in the file to reconstruct the data when it reads it. 
+This also prevent you from having to leave any space in the file.
+
+```java
+import eu.mshade.mwork.binarytag.BinaryTagDriver;
+import eu.mshade.mwork.binarytag.segment.SegmentBinaryTag;
+
+public class Main {
+    public static void main(String[] args) {
+        Account account = new Account("_RealAlpha_", 17);
+
+        File index = new File("index.dat");
+        File data = new File("data.dat");
+
+        BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
+        SegmentBinaryTag segmentBinaryTag = new SegmentBinaryTag(index, data, binaryTagDriver);
+
+        CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
+        compoundBinaryTag.putString("name", account.getName());
+        compoundBinaryTag.putInt("age", account.getAge());
+        compoundBinaryTag.putLong("time", account.getTime());
+
+        segmentBinaryTag.writeCompoundBinaryTag("first", compoundBinaryTag);
+    }
+}
+```
+Therefore, you shall not allocate any space for each object where everything is expandable.
