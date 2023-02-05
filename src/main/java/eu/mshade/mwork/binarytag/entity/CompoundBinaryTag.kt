@@ -37,6 +37,11 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
         return this
     }
 
+    fun putByte(key: String, value: Boolean): CompoundBinaryTag {
+        putByte(key, if (value) 1 else 0)
+        return this
+    }
+
     fun getByte(key: String): Byte {
         return getBinaryTag(key)?.value as? Byte ?: 0
     }
