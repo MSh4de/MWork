@@ -13,35 +13,19 @@ public interface Event {
 }
 ```
 
-When listening to a class you can specify if you want to listen only to that class or to the classes that inherit it by default it's in `ONLY`, in our case we want to listen to everything so we put in `DERIVE`.
+When listening to a class you can specify if you want to listen only to that class or to the classes that inherit it. By default, the `ONLY` filter mode is selected, in our case we want to listen to everything so we set it in `DERIVE` mode.
 
 ```java
 public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.HIGH);
+        eventBus.subscribe(Event.class, (event) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
     }
 }
 ```
 
-The ParameterContainer allows you to pass variables dynamically. \
-An example of how to add/retrieve variables.
-```java
-ParameterContainer parameterContainer = ParameterContainer.of()
-        .putContainer("Hello");
-System.out.println(parameterContainer.getContainer(String.class));
-```
-
-And if you have several variables with the same type you can specify a name.
-```java
-ParameterContainer parameterContainer = ParameterContainer.of()
-        .putContainer("test", "Hello");
-System.out.println(parameterContainer.getContainer("test", String.class));
-```
-In order to issue an event we just need to use the `publish` method which can take 2 arguments, the first is the object that inherits from our `Event` class and the second is an optional `ParameterContainer`. 
+In order to issue an event we just need to use the `publish` method, you just need to pass the object that inherits from our `Event` class in parameter.
 ```java
 public class HelloWorld implements Event {
     
@@ -53,15 +37,13 @@ public class Main {
     public static void main(String[] args) {
         EventBus<Event> eventBus = new EventBus<>();
 
-        eventBus.subscribe(Event.class, (event, parameterContainer) ->  System.out.println(event.getClass()))
-                .withEventFilter(EventFilter.DERIVE)
-                .withEventPriority(EventPriority.HIGH);
+        eventBus.subscribe(Event.class, (event) ->  System.out.println(event.getClass()), EventFilter.DERIVE, EventPriority.HIGH);
         
         eventBus.publish(new HelloWorld());
     }
 }
 ```
-### Name Binary Tag
+### Binary Tag
 
 The name binary tag is a very lightweight format that allows you to store whatever you want.\
 In our little example we will store an Account object.
@@ -84,21 +66,49 @@ public class Account {
 ```
 
 ```java
-Account acount = new Account("_RealAlpha_", 17);
-DefaultBinaryTagBufferDriver defaultBinaryTagBufferDriver = new DefaultBinaryTagBufferDriver();
+public class Main {
+    public static void main(String[] args) {
+        Account account = new Account("_RealAlpha_", 17);
+        BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
 
-CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
-compoundBinaryTag.putString("name", account.getName());
-compoundBinaryTag.putInt("age", account.getAge());
-compoundBinaryTag.putLong("time", account.getTime());
+        CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
+        compoundBinaryTag.putString("name", account.getName());
+        compoundBinaryTag.putInt("age", account.getAge());
+        compoundBinaryTag.putLong("time", account.getTime());
 
-defaultBinaryTagBufferDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
+        binaryTagDriver.writeCompoundBinaryTag(compoundBinaryTag, new File("test.dat"));
+    }
+}
 ```
-You can see that it's quite tedious to write our object so there is another way to write it more easily.
+
+### Segment Binary Tag
+A **Segment Binary Tag** is a valuable system that provides you the capability of writing as much compound binary tags as you
+wish in the same file, without having to rewrite the whole file when your purpose is to modify only one of them.
+<hr>
+The Binary Tag will take advantage of the scattered data written in the file to reconstruct the data when it reads it. 
+This also prevent you from having to leave any space in the file.
 
 ```java
-DefaultBinaryTagMarshal defaultBinaryTagMarshal = new DefaultBinaryTagMarshal();
-defaultBinaryTagBufferDriver.writeCompoundBinaryTag(defaultBinaryTagMarshal.marshal(accountContext), new File("test.dat"));
+import eu.mshade.mwork.binarytag.BinaryTagDriver;
+import eu.mshade.mwork.binarytag.segment.SegmentBinaryTag;
+
+public class Main {
+    public static void main(String[] args) {
+        Account account = new Account("_RealAlpha_", 17);
+
+        File index = new File("index.dat");
+        File data = new File("data.dat");
+
+        BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
+        SegmentBinaryTag segmentBinaryTag = new SegmentBinaryTag(index, data, binaryTagDriver);
+
+        CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
+        compoundBinaryTag.putString("name", account.getName());
+        compoundBinaryTag.putInt("age", account.getAge());
+        compoundBinaryTag.putLong("time", account.getTime());
+
+        segmentBinaryTag.writeCompoundBinaryTag("first", compoundBinaryTag);
+    }
+}
 ```
-There are lots of little tools, we can specify a special marshal for a type, apply a compression on a variable.\
-Later on, there will be a mapping system to allow to read a very big file quickly and with few resources, it will be useful for schematics for example.
+Therefore, you shall not allocate any space for each object where everything is expandable.
