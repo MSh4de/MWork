@@ -9,7 +9,6 @@ import java.nio.channels.AsynchronousFileChannel
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.util.*
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutionException
 import kotlin.math.min
 
@@ -22,12 +21,12 @@ class SegmentBinaryTag(path: Path) {
         private val LOGGER = LoggerFactory.getLogger(SegmentBinaryTag::class.java)
     }
 
-    private var asynchronousFileChannel: AsynchronousFileChannel? = null
+    private var file: AsynchronousFileChannel? = null
     private val segmentBlocks = mutableMapOf<String, SegmentBlock>()
 
     init {
         try {
-            asynchronousFileChannel = AsynchronousFileChannel.open(
+            file = AsynchronousFileChannel.open(
                 path,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE,
@@ -42,7 +41,7 @@ class SegmentBinaryTag(path: Path) {
     }
 
     fun read(key: ByteArray): ByteArray {
-        val stringKey = Base64.getEncoder().encodeToString(key)
+        val stringKey = encodeKey(key)
         val segmentBlock = segmentBlocks[stringKey] ?: return ByteArray(0)
 
         val headers = segmentBlock.segmentHeaders
@@ -63,7 +62,7 @@ class SegmentBinaryTag(path: Path) {
                 }
 
                 val byteBuffer = ByteBuffer.allocate(segmentHeader.getPayloadSize())
-                val read = asynchronousFileChannel!!.read(byteBuffer, segmentHeader.getPayloadStart())
+                val read = file!!.read(byteBuffer, segmentHeader.getPayloadStart())
                 read.get()
                 payload.put(byteBuffer.array())
 
@@ -90,7 +89,7 @@ class SegmentBinaryTag(path: Path) {
     }
 
     fun write(key: ByteArray, payload: ByteArray) {
-        val stringKey = Base64.getEncoder().encodeToString(key)
+        val stringKey = encodeKey(key)
 
         val segmentBlock = segmentBlocks.computeIfAbsent(stringKey) { _ -> SegmentBlock(key) }
 
@@ -128,25 +127,12 @@ class SegmentBinaryTag(path: Path) {
         while (index != payload.size) {
 
             if (segmentHeaders.isEmpty()) {
-                val start = asynchronousFileChannel?.size() ?: 0L
-                val splitPayload = payload.copyOfRange(index, payload.size)
 
-                val segmentHeader =
-                    SegmentHeader(
-                        splitPayload.size + Int.SIZE_BYTES * 4 + key.size,
-                        key,
-                        segmentHeaderIndex++,
-                        splitPayload.size,
-                        start
-                    )
-
+                val segmentHeader = createSegment(index, key, payload, segmentHeaderIndex)
                 segmentHeaders.add(segmentHeader)
+                segmentHeaderIndex++
+                index += segmentHeader.getPayloadSize()
 
-                asynchronousFileChannel?.let {
-                    segmentHeader.write(it, splitPayload).get()
-                }
-
-                index += splitPayload.size
             } else {
 
                 if (segmentHeaderIndex < headersArray.size) {
@@ -156,11 +142,10 @@ class SegmentBinaryTag(path: Path) {
                     val maxSize =
                         min(index + (segmentHeader.end - segmentHeader.getPayloadStart()).toInt(), payload.size)
 
-                    val splitPayload =
-                        payload.copyOfRange(index, maxSize)
+                    val splitPayload = payload.copyOfRange(index, maxSize)
 
 
-                    asynchronousFileChannel?.let {
+                    file?.let {
                         segmentHeader.update(it, splitPayload).get()
                     }
 
@@ -168,25 +153,10 @@ class SegmentBinaryTag(path: Path) {
 
                 } else {
 
-                    val start = asynchronousFileChannel?.size() ?: 0L
-                    val splitPayload = payload.copyOfRange(index, payload.size)
-
-                    val segmentHeader =
-                        SegmentHeader(
-                            splitPayload.size + Int.SIZE_BYTES * 4 + key.size,
-                            key,
-                            segmentHeaderIndex++,
-                            splitPayload.size,
-                            start
-                        )
-
+                    val segmentHeader = createSegment(index, key, payload, segmentHeaderIndex)
                     segmentHeaders.add(segmentHeader)
-
-                    asynchronousFileChannel?.let {
-                        segmentHeader.write(it, splitPayload).get()
-                    }
-
-                    index += splitPayload.size
+                    segmentHeaderIndex++
+                    index += segmentHeader.getPayloadSize()
                 }
             }
         }
@@ -194,7 +164,7 @@ class SegmentBinaryTag(path: Path) {
 
         if (segmentHeaderIndex < headersArray.size) {
             for (i in segmentHeaderIndex until headersArray.size) {
-                asynchronousFileChannel?.let {
+                file?.let {
                     headersArray[i]?.update(it, ByteArray(0))?.get()
                 }
             }
@@ -202,7 +172,7 @@ class SegmentBinaryTag(path: Path) {
     }
 
     fun hasKey(key: ByteArray): Boolean {
-        val stringKey = Base64.getEncoder().encodeToString(key)
+        val stringKey = encodeKey(key)
         return segmentBlocks.containsKey(stringKey)
     }
 
@@ -210,11 +180,33 @@ class SegmentBinaryTag(path: Path) {
         return hasKey(key.toByteArray())
     }
 
+    private fun createSegment(index: Int, key: ByteArray, payload: ByteArray, segmentHeaderIndex: Int): SegmentHeader {
+        val start = file?.size() ?: 0L
+        val splitPayload = payload.copyOfRange(index, payload.size)
+
+        val segmentHeader =
+            SegmentHeader(
+                splitPayload.size + Int.SIZE_BYTES * 4 + key.size,
+                key,
+                segmentHeaderIndex,
+                splitPayload.size,
+                start
+            )
+
+
+        file?.let {
+            segmentHeader.write(it, splitPayload).get()
+        }
+
+
+        return segmentHeader
+    }
+
     private fun load() {
 
-        val file = asynchronousFileChannel ?: return
+        val file = file ?: return
 
-        val segmentHeaders = ConcurrentLinkedQueue<SegmentHeader>()
+        val segmentHeaders = mutableListOf<SegmentHeader>()
 
         val size = file.size()
         var index = 0L
@@ -242,7 +234,7 @@ class SegmentBinaryTag(path: Path) {
         }
 
         segmentHeaders.forEach {
-            val stringKey = Base64.getEncoder().encodeToString(it.key)
+            val stringKey = encodeKey(it.key)
             segmentBlocks.computeIfAbsent(stringKey) { _ -> SegmentBlock(it.key) }.segmentHeaders.add(it)
         }
 
@@ -251,10 +243,13 @@ class SegmentBinaryTag(path: Path) {
 
     private fun read(cursor: Long, size: Int): DataInputStream {
         val byteBuffer = ByteBuffer.allocate(size)
-        asynchronousFileChannel?.read(byteBuffer, cursor)?.get()
+        file?.read(byteBuffer, cursor)?.get()
         return DataInputStream(ByteArrayInputStream(byteBuffer.array()))
     }
 
+    private fun encodeKey(key: ByteArray): String {
+        return Base64.getEncoder().encodeToString(key)
+    }
 }
 
 data class SegmentBlock(val key: ByteArray, val segmentHeaders: MutableList<SegmentHeader> = mutableListOf()) {
