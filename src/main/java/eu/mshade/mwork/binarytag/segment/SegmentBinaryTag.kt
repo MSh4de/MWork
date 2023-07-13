@@ -10,10 +10,10 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.util.*
 import java.util.concurrent.ExecutionException
+import javax.swing.text.Segment
 import kotlin.math.min
 
 class SegmentBinaryTag(path: Path) {
-
 
     constructor(file: File) : this(file.toPath())
 
@@ -41,6 +41,11 @@ class SegmentBinaryTag(path: Path) {
     }
 
     fun read(key: ByteArray): ByteArray {
+        if (file == null) {
+            return ByteArray(0)
+        }
+
+
         val stringKey = encodeKey(key)
         val segmentBlock = segmentBlocks[stringKey] ?: return ByteArray(0)
 
@@ -52,18 +57,17 @@ class SegmentBinaryTag(path: Path) {
         }
 
         val payload = ByteBuffer.allocate(segmentBlock.getSpace())
+
         for (i in headers.indices) {
             val segmentHeader = headersArray[i] ?: continue
 
             try {
-
                 if (segmentHeader.getPayloadSize() == 0) {
                     continue
                 }
 
                 val byteBuffer = ByteBuffer.allocate(segmentHeader.getPayloadSize())
-                val read = file!!.read(byteBuffer, segmentHeader.getPayloadStart())
-                read.get()
+                file?.read(byteBuffer, segmentHeader.getPayloadStart())?.get()
                 payload.put(byteBuffer.array())
 
             } catch (e: InterruptedException) {
@@ -76,6 +80,7 @@ class SegmentBinaryTag(path: Path) {
 
             }
         }
+
         return payload.array()
     }
 
@@ -213,14 +218,12 @@ class SegmentBinaryTag(path: Path) {
         while (index < size) {
 
             val start = index
-            val byteBufferAllocatedSize = read(index, Int.SIZE_BYTES * 2)
-
+            val byteBufferAllocatedSize = read(index, Int.SIZE_BYTES)
 
             val allocatedSize = byteBufferAllocatedSize.readInt()
-            val keySize = byteBufferAllocatedSize.readInt()
 
-
-            val byteBuffer = read(index + Int.SIZE_BYTES * 2, keySize + Int.SIZE_BYTES * 2)
+            val byteBuffer = read(index + Int.SIZE_BYTES, allocatedSize)
+            val keySize = byteBuffer.readInt()
             val key = ByteArray(keySize)
             byteBuffer.read(key)
             val segmentIndex = byteBuffer.readInt()
@@ -249,6 +252,23 @@ class SegmentBinaryTag(path: Path) {
 
     private fun encodeKey(key: ByteArray): String {
         return Base64.getEncoder().encodeToString(key)
+    }
+
+
+
+    fun getSegmentBlocks(): Collection<SegmentBlock> {
+        return segmentBlocks.values
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SegmentBinaryTag) return false
+
+        return file == other.file
+    }
+
+    override fun hashCode(): Int {
+        return 31 * (file?.hashCode() ?: 0)
     }
 }
 

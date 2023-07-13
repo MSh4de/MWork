@@ -23,12 +23,17 @@ data class SegmentHeader(
         return payloadSize
     }
 
+
     fun getSpace(): Int {
         return allocatedSize + Int.SIZE_BYTES * 4 + key.size
     }
 
     fun getPayloadStart(): Long {
         return start + Int.SIZE_BYTES * 4 + key.size
+    }
+
+    fun getRealPayloadSize(): Int {
+        return allocatedSize - Int.SIZE_BYTES * 4 - key.size
     }
 
     fun update(file: AsynchronousFileChannel, bytes: ByteArray): Future<Int> {

@@ -4,13 +4,16 @@ import eu.mshade.mwork.PrettyString
 import eu.mshade.mwork.binarytag.*
 import java.util.*
 import java.util.function.Function
+import kotlin.collections.LinkedHashMap
 
 open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND, private val binaryTagMap: MutableMap<String, BinaryTag<*>> = mutableMapOf()) :
     BinaryTag<MutableMap<String, BinaryTag<*>>>(
         binaryTagKey, binaryTagMap
-    ), PrettyString {
+    ), PrettyString, Cloneable {
 
     constructor() : this(BinaryTagType.COMPOUND, mutableMapOf())
+
+    constructor(binaryTagMap: MutableMap<String, BinaryTag<*>>) : this(BinaryTagType.COMPOUND, binaryTagMap)
 
 
     fun putBinaryTag(key: String, value: BinaryTag<*>): CompoundBinaryTag {
@@ -181,6 +184,9 @@ open class CompoundBinaryTag(binaryTagKey: BinaryTagKey = BinaryTagType.COMPOUND
         return stringBuilder.toString()
     }
 
+    public override fun clone(): CompoundBinaryTag {
+        return CompoundBinaryTag(LinkedHashMap(binaryTagMap))
+    }
 
     companion object {
         @JvmField val EMPTY = CompoundBinaryTag()
