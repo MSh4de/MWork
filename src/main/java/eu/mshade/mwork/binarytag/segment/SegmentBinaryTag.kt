@@ -36,7 +36,7 @@ class SegmentBinaryTag(path: Path) {
             load()
 
         } catch (e: IOException) {
-            throw RuntimeException(e)
+            LOGGER.error("Impossible to open file", e)
         }
     }
 
@@ -268,28 +268,6 @@ class SegmentBinaryTag(path: Path) {
     }
 
     override fun hashCode(): Int {
-        return 31 * (file?.hashCode() ?: 0)
-    }
-}
-
-data class SegmentBlock(val key: ByteArray, val segmentHeaders: MutableList<SegmentHeader> = mutableListOf()) {
-
-    fun getSpace(): Int {
-        return segmentHeaders.sumOf { it.getPayloadSize() }
-    }
-
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is SegmentBlock) return false
-
-        if (!key.contentEquals(other.key)) return false
-        return segmentHeaders == other.segmentHeaders
-    }
-
-    override fun hashCode(): Int {
-        var result = key.contentHashCode()
-        result = 31 * result + segmentHeaders.hashCode()
-        return result
+        return Objects.hash(file)
     }
 }

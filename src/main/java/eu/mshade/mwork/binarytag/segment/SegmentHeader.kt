@@ -6,6 +6,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousFileChannel
+import java.util.Objects
 import java.util.concurrent.Future
 
 data class SegmentHeader(
@@ -93,11 +94,6 @@ data class SegmentHeader(
     }
 
     override fun hashCode(): Int {
-        var result = allocatedSize.hashCode()
-        result = 31 * result + key.contentHashCode()
-        result = 31 * result + index
-        result = 31 * result + payloadSize
-        return result
+        return Objects.hash(allocatedSize, key, index, payloadSize)
     }
-
 }
