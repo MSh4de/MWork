@@ -96,18 +96,17 @@ public class Main {
     public static void main(String[] args) {
         Account account = new Account("_RealAlpha_", 17);
 
-        File index = new File("index.dat");
-        File data = new File("data.dat");
+        File segmentFile = new File("myFile.dat");
 
         BinaryTagDriver binaryTagDriver = new BinaryTagDriver();
-        SegmentBinaryTag segmentBinaryTag = new SegmentBinaryTag(index, data, binaryTagDriver);
+        SegmentBinaryTag segmentBinaryTag = new SegmentBinaryTag(segmentFile);
 
         CompoundBinaryTag compoundBinaryTag = new CompoundBinaryTag();
         compoundBinaryTag.putString("name", account.getName());
         compoundBinaryTag.putInt("age", account.getAge());
         compoundBinaryTag.putLong("time", account.getTime());
 
-        segmentBinaryTag.writeCompoundBinaryTag("first", compoundBinaryTag);
+        segmentBinaryTag.writeCompound("first", binaryTagDriver, compoundBinaryTag);
     }
 }
 ```
